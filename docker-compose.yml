@@ -65,7 +65,7 @@ services:
         - "3000:3000"
         - "3001:3001"
     environment:
-        - "DEBUG=proxy:*"
+        - "DEBUG=tutorial:*"
         - "WEB_APP_PORT=3000" # Port used by the content provider proxy and web-app for viewing data
         - "IOTA_HTTP_HOST=iot-agent"
         - "IOTA_HTTP_PORT=7896"
@@ -76,6 +76,8 @@ services:
         - "OPENWEATHERMAP_KEY_ID=<ADD_YOUR_KEY_ID>"
         - "TWITTER_CONSUMER_KEY=<ADD_YOUR_CONSUMER_KEY>"
         - "TWITTER_CONSUMER_SECRET=<ADD_YOUR_CONSUMER_SECRET>"
+        - "NGSI_LD_PREFIX="
+        - "SECURE_ENDPOINTS=true"
         - "KEYROCK_URL=http://localhost"
         - "KEYROCK_IP_ADDRESS=http://172.18.1.5"
         - "KEYROCK_PORT=3005"
