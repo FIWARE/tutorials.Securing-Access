@@ -280,8 +280,14 @@ CREATE TABLE `oauth_client` (
 LOCK TABLES `oauth_client` WRITE;
 /*!40000 ALTER TABLE `oauth_client` DISABLE KEYS */;
 INSERT INTO `oauth_client` VALUES 
-('tutorial-dckr-site-0000-xpresswebapp','FIWARE Tutorial','FIWARE Application protected by OAuth2 and Keyrock','tutorial-dckr-site-0000-clientsecret','http://localhost:3000','http://localhost:3000/login','default','password,authorization_code','code',NULL,NULL,NULL),
-('tutorial-lcal-host-0000-xpresswebapp','localhost App','Localhost Callback protected by OAuth2 and Keyrock','tutorial-lcal-host-0000-clientsecret','http://localhost:3000','http://localhost:3000/login','default','password,authorization_code','code',NULL,NULL,NULL);
+('tutorial-dckr-site-0000-xpresswebapp','FIWARE Tutorial',
+  'FIWARE Application protected by OAuth2 and Keyrock','tutorial-dckr-site-0000-clientsecret',
+  'http://localhost:3000','http://localhost:3000/login','default',
+  'authorization_code,implicit,password,client_credentials,refresh_token','code',NULL,NULL,NULL),
+('tutorial-lcal-host-0000-xpresswebapp','localhost App',
+  'Localhost Callback protected by OAuth2 and Keyrock','tutorial-lcal-host-0000-clientsecret',
+  'http://localhost:3000','http://localhost:3000/login','default',
+  'authorization_code,implicit,password,client_credentials,refresh_token','code',NULL,NULL,NULL);
 
 /*!40000 ALTER TABLE `oauth_client` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -435,7 +441,7 @@ INSERT INTO `permission` VALUES
 ('3','Manage roles',NULL,1,NULL,NULL,NULL,'idm_admin_app'),('4','Manage authorizations',NULL,1,NULL,NULL,NULL,'idm_admin_app'),
 ('5','Get and assign all public application roles',NULL,1,NULL,NULL,NULL,'idm_admin_app'),
 ('6','Get and assign only public owned roles',NULL,1,NULL,NULL,NULL,'idm_admin_app'),
-('increase-stck-0000-0000-000000000000','Order Stock','Increase Stock Count',0,'/stock','POST',NULL,'tutorial-dckr-site-0000-xpresswebapp'),
+('increase-stck-0000-0000-000000000000','Order Stock','Increase Stock Count',0,'GET','/stock',NULL,'tutorial-dckr-site-0000-xpresswebapp'),
 ('entrance-open-0000-0000-000000000000','Unlock','Unlock main entrance',0,'POST','/door/unlock',NULL,'tutorial-dckr-site-0000-xpresswebapp'),
 ('alrmbell-ring-0000-0000-000000000000','Ring Alarm Bell',NULL,0,'POST','/ring',NULL,'tutorial-dckr-site-0000-xpresswebapp'),
 ('pricechg-stck-0000-0000-000000000000','Access Price Changes',NULL,0,'GET','/price-change',NULL,'tutorial-dckr-site-0000-xpresswebapp');
