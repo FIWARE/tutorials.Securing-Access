@@ -11,7 +11,7 @@ Point (PDP) to restrict access.
 
 The tutorial discusses code showing how to integrate Keyrock within a web application and demonstrates examples of
 Authorization Server interactions using the **Keyrock** GUI. Some [cUrl](https://ec.haxx.se/) commands are also
-used to access the **Keyrock** REST API - [Postman documentation](http://fiware.github.io/tutorials.Securing-Acess/)
+used to access the **Keyrock** REST API - [Postman documentation](http://fiware.github.io/tutorials.Securing-Access/)
 is also available.
 
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://www.getpostman.com/collections/66d8ba3abaf7319941b1)
