@@ -441,10 +441,10 @@ INSERT INTO `permission` VALUES
 ('3','Manage roles',NULL,1,NULL,NULL,NULL,'idm_admin_app'),('4','Manage authorizations',NULL,1,NULL,NULL,NULL,'idm_admin_app'),
 ('5','Get and assign all public application roles',NULL,1,NULL,NULL,NULL,'idm_admin_app'),
 ('6','Get and assign only public owned roles',NULL,1,NULL,NULL,NULL,'idm_admin_app'),
-('increase-stck-0000-0000-000000000000','Order Stock','Increase Stock Count',0,'GET','/stock',NULL,'tutorial-dckr-site-0000-xpresswebapp'),
+('increase-stck-0000-0000-000000000000','Order Stock','Increase Stock Count',0,'GET','/app/order-stock',NULL,'tutorial-dckr-site-0000-xpresswebapp'),
 ('entrance-open-0000-0000-000000000000','Unlock','Unlock main entrance',0,'POST','/door/unlock',NULL,'tutorial-dckr-site-0000-xpresswebapp'),
-('alrmbell-ring-0000-0000-000000000000','Ring Alarm Bell',NULL,0,'POST','/ring',NULL,'tutorial-dckr-site-0000-xpresswebapp'),
-('pricechg-stck-0000-0000-000000000000','Access Price Changes',NULL,0,'GET','/price-change',NULL,'tutorial-dckr-site-0000-xpresswebapp');
+('alrmbell-ring-0000-0000-000000000000','Ring Alarm Bell',NULL,0,'POST','/bell/ring',NULL,'tutorial-dckr-site-0000-xpresswebapp'),
+('pricechg-stck-0000-0000-000000000000','Access Price Changes',NULL,0,'GET','/app/price-change',NULL,'tutorial-dckr-site-0000-xpresswebapp');
 /*!40000 ALTER TABLE `permission` ENABLE KEYS */;
 UNLOCK TABLES;
 
