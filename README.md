@@ -21,7 +21,6 @@ is also available.
 
 - [Securing Access](#securing-access)
   * [Standard Concepts of Identity Management](#standard-concepts-of-identity-management)
-  * [OAuth2](#oauth2)
 - [Prerequisites](#prerequisites)
   * [Docker](#docker)
   * [Cygwin](#cygwin)
@@ -52,8 +51,48 @@ is also available.
 
 # Securing Access
 
+> "When a person or party approaches your post, you should challenge them at a distance that is sufficient
+> for you to react if they turn out to have hostile intentions. You should say in a firm voice, loud enough
+> to be easily heard, *"Halt! Who goes there?"* (or *"Who is there?"*). Once the person answers, you should then say
+> *"Advance to be recognized."* ... If you have identified the person or persons approaching, permit them to pass.
+> If you are not satisfied with that person's identification, you must detain the person and call the petty officer
+> of the watch."
+>
+>  — 11th General Order of the US Marine Corps
 
-.... etc
+In order to secure access to application resources, it is necessary to know two things. Firstly, who is making the
+request and secondly is the requestor permitted to access the resource? The FIWARE **Keyrock** generic enabler uses
+uses [OAuth2](https://oauth.net/2/) to enable third-party applications to obtain limited access to services.
+**OAuth2** is the open standard for access delegation to grant access rights. It allows notifying a resource provider
+(e.g. the Knowage Generic Enabler) that the resource  owner (e.g. you) grants permission to a third-party
+(e.g. a Knowage Application) access to their information (e.g. the list of entities).
+
+There are several common OAuth 2.0 grant flows, the details of which can be found below:
+
+* [Authorization Code](https://oauth.net/2/grant-types/authorization-code)
+* [Implicit](https://oauth.net/2/grant-types/implicit)
+* [Password](https://oauth.net/2/grant-types/password)
+* [Client Credentials](https://oauth.net/2/grant-types/client-credentials)
+* [Device Code](https://oauth.net/2/grant-types/device-code)
+* [Refresh Token](https://oauth.net/2/grant-types/refresh-token)
+
+The primary concept is that both **Users**  and **Applications** must first identify themselves using
+a standard OAuth2 Challenge-Response mechanism. Thereafter a user is assigned a token which they
+append to every subsequent request. This token identifies the user, the application and the rights the
+user is able to exercise.  **Keyrock** can then be used with other enablers can be used to limit and
+lock-down access. The details of the access flows are discussed below and in subsequent tutorials.
+
+The reasoning behind OAuth2 is that you never need to expose your own username and password to a
+third party to give them  full access - you merely permit the relevant access which can be either Read-Only
+or Read-Write and such access can be defined down to a granular level. Furthermore there is provision for
+revoking access at any time, leaving the resource owner in control of who can access what.
+
+Once the application is able to authenticate users, it is also possible to lock down access using access control
+mechanisms. Access control requires having an access policy - in other words defining who can do what.
+We have already defined roles and permisions within the [previous tutorial](https://github.com/Fiware/tutorials.Roles-Permissions),
+and now need to programatically enforce this policy by adding in a simple
+Policy Decision Point (PDP) – which evaluates and issues authorization decisions, and then secure access by enforcing
+the decision using a Policy Enforcement Point (PEP).
 
 
 ## Standard Concepts of Identity Management
@@ -82,34 +121,6 @@ Additionally two further non-human application objects can be secured within a F
  The relationship between the objects can be seen below - the entities marked in red are used directly within this tutorial:
 
 ![](https://fiware.github.io/tutorials.Securing-Access/img/entities.png)
-
-## OAuth2
-
-**Keyrock** uses [OAuth2](https://oauth.net/2/) to enable third-party applications
-to obtain limited access to services. **OAuth2** is the open standard for access delegation to
-grant access rights. It allows notifying a resource provider (e.g. the Knowage Generic Enabler)
-that the resource  owner (e.g. you) grants permission to a third-party (e.g. a Knowage Application)
-access to their information (e.g. the list of entities).
-
-There are several common OAuth 2.0 grant flows, the details of which can be found below:
-
-* [Authorization Code](https://oauth.net/2/grant-types/authorization-code)
-* [Implicit](https://oauth.net/2/grant-types/implicit)
-* [Password](https://oauth.net/2/grant-types/password)
-* [Client Credentials](https://oauth.net/2/grant-types/client-credentials)
-* [Device Code](https://oauth.net/2/grant-types/device-code)
-* [Refresh Token](https://oauth.net/2/grant-types/refresh-token)
-
-The primary concept is that both **Users**  and **Applications** must first identify themselves using
-a standard OAuth2 Challenge-Response mechanism. Thereafter a user is assigned a token which they
-append to every subsequent request. This token identifies the user, the application and the rights the
-user is able to exercise.  **Keyrock** can then be used with other enablers can be used to limit and
-lock-down access. The details of the access flows are discussed below and in subsequent tutorials.
-
-The reasoning behind OAuth2 is that you never need to expose your own username and password to a
-third party to give them  full access - you merely permit the relevant access which can be either Read-Only
-or Read-Write and such access can be defined down to a granular level. Furthermore there is provision for
-revoking access at any time, leaving the resource owner in control of who can access what.
 
 
 # Prerequisites
@@ -309,16 +320,16 @@ One application, with appropriate roles and permissions has also been created:
 | Client ID     | `tutorial-dckr-site-0000-xpresswebapp` |
 | Client Secret | `tutorial-dckr-site-0000-clientsecret` |
 | URL           | `http://localhost:3000`                |
-| RedirectURL   | `http://localhost:3000`                |
+| RedirectURL   | `http://localhost:3000/login`          |
 
 
-To save time, the data creating users and organizations from the [previous tutorial](https://github.com/Fiware/tutorials.Identity-Management) has been downloaded and is automatically persisted to the MySQL
-database on start-up so the asigned UUIDs do not change and the data does not need to be entered again.
+To save time, the data creating users and organizations from the [previous tutorial](https://github.com/Fiware/tutorials.Roles-Permissions) has been downloaded and is automatically persisted to the MySQL
+database on start-up so the assigned UUIDs do not change and the data does not need to be entered again.
 
 To refresh your memory about how to create users and organizations and applications, you can log in at `http://localhost:3005/idm`
 using the account `alice-the-admin@test.com` with a password of `test`.
 
-![](https://fiware.github.io/tutorials.Securing-Access/img/log-in.png)
+![](https://fiware.github.io/tutorials.Securing-Access/img/keyrock-log-in.png)
 
 and look around.
 
@@ -417,7 +428,11 @@ The username (Alice) is returned as shown:
 ### User Credentials - Sample Code
 
 
-The code delegates all the OAuth2 calls to a separate library function, `oa.getOAuthPasswordCredentials()`, the user is retrieve using a separate `oa.get()` call as shown:
+
+The code delegates all the OAuth2 calls to a separate library [oauth2,js](https://github.com/Fiware/tutorials.Step-by-Step/blob/master/docker/context-provider/express-app/lib/oauth2.js). Every request includes the standard OAuth2 header and each
+request is wrapped in a promise to simplify the application code. The User Credentials flow is invoked using the
+`oa.getOAuthPasswordCredentials()` function - once an `access_token` is received, the user details are retrieved
+ using a separate `oa.get()` call as shown:
 
 ```javascript
 function userCredentialGrant(req, res){
@@ -479,7 +494,9 @@ are who you claim to be from Github.
 
 ### Authorization Code - Sample Code
 
-A user must first be redirected to **Keyrock**, requesting a `code`:
+A user must first be redirected to **Keyrock**, requesting a `code`, `oa.getAuthorizeUrl()` is returning
+a URL of the form `/oauth/authorize?response_type=code&client_id={{client-id}}&state=xyz&redirect_uri={{callback_url}}
+`
 
 ```javascript
 function authCodeGrant(req, res){
@@ -488,8 +505,8 @@ function authCodeGrant(req, res){
 }
 ```
 
-The after the User authorizes access, the response is handled in the code below, an access code is received from **Keyrock**
-and  second request is made to obtain a usable access token.
+The after the User authorizes access, the response is received by the `redirect_uri` and is handled in the code
+below, a interim access code is received from **Keyrock** and second request must be made to obtain a usable `access_token`.
 
 ```javascript
 function authCodeGrantCallback(req,res){
@@ -508,7 +525,7 @@ function authCodeGrantCallback(req,res){
 It is possible to invoke the User Credentials grant flow programmatically, by bringing up the page `http://localhost:3000/`
 and clicking on the Authorization Code Button
 
-The user is first is redirected to **Keyrock**, and must log in
+The user is initially redirected to **Keyrock**, and must log in
 
 ![](https://fiware.github.io/tutorials.Securing-Access/img/keyrock-log-in.png)
 
@@ -519,7 +536,7 @@ The user must then authorize the request
 The response displays the user on the top right of the screen, details of the token are also flashed onto the screen.
 
 > **Note** Unless you deliberately log out of **Keyrock** `http://localhost:3005`, the existing **Keyrock** session which has already
-> permitted access will be used for subsequent authorization request.
+> permitted access will be used for subsequent authorization requests, so the **Keyrock** login screen will not be shown again.
 
 
 
@@ -527,15 +544,17 @@ The response displays the user on the top right of the screen, details of the to
 ## Implicit Grant
 
 The Implicit grant flow is a simplified form of the Authorization grant flow where **Keyrock** returns an
-access-token directly rather than returning an acces-code. This is less secure than the Authcode flow but
-could be used in some client-side applications
+`access_token` directly rather than returning an interim access-code. This is less secure than the Authcode flow but
+can be used in some client-side applications
 
 ![](https://fiware.github.io/tutorials.Securing-Access/img/implicit-flow.png)
 
 
 ### Implicit Grant - Sample Code
 
-A user must first be redirected to **Keyrock**, requesting a `token`:
+A user must first be redirected to **Keyrock**, requesting a `token`,  `oa.getAuthorizeUrl()` is returning
+a URL of the form `/oauth/authorize?response_type=token&client_id={{client-id}}&state=xyz&redirect_uri={{callback_url}}
+`
 
 ```javascript
 function implicitGrant(req, res){
@@ -544,7 +563,7 @@ function implicitGrant(req, res){
 }
 ```
 
-The after the User authorizes access, the response is handled in the code below,
+The after the User authorizes access, the response is received by the `redirect_uri` and is handled in the code below,
 a usable access token is received from **Keyrock**
 
 ```javascript
@@ -562,7 +581,7 @@ function implicitGrantCallback(req,res){
 It is possible to invoke the Implicit grant flow programmatically, by bringing up the page `http://localhost:3000/`
 and clicking on the Implicit Grant Button
 
-The user is first is redirected to **Keyrock**, and must log in
+The user is initially redirected to **Keyrock**, and must log in
 
 ![](https://fiware.github.io/tutorials.Securing-Access/img/keyrock-log-in.png)
 
@@ -719,7 +738,8 @@ function accessControl (req, res , next, url=req.url){
 }
 ```
 
-A secured Web Page needs to check if the `authorized` flag has been set, and redirect the user if disallowed
+A secured Web Page needs to check if the `authorized` flag has been set, and redirect the user if disallowed.
+This is an example of a Policy Enforcement Point (PEP):
 
 ```javascript
 function priceChange(req, res) {
@@ -731,7 +751,8 @@ function priceChange(req, res) {
 }
 ```
 
-Similarly a secured command can fail fast and return an error code if the user is not authorized,
+Similarly a secured command can fail fast and return an error code if the user is not authorized, this is
+another example of a Policy Enforcement Point (PEP):
 
 ```javascript
 function sendCommand (req, res) {
@@ -740,13 +761,8 @@ function sendCommand (req, res) {
 		return res.status(403).send({ message: 'Forbidden' });
 	}
 	/// Continue with the normal flow of execution...
+}
 ```
-
-
-
-
-
-
 
 ### Access Control - Running the Example
 
@@ -759,14 +775,14 @@ function sendCommand (req, res) {
 
 #### Bob The Regional Manager
 
-* Log in as `bob-the-manager@test.com` with the password `test`
+* From `http://localhost:3000`, log in as `bob-the-manager@test.com` with the password `test`
 * Click on the restricted access links at the base of the page - access is **permitted** - This is a management only permission
 * Open the Device Monitor on `http://localhost:3000/device/monitor`
    * Unlock a door - access is **denied**. - This is a security only permission
    * Ring a bell - access is **permitted** - This is permitted to all users
 
 #### Charlie the Security Manager
-* Log in as `security@test.com` with the password `test`
+* From `http://localhost:3000`, log in as  `charlie-security@test.com` with the password `test`
 * Click on the restricted access links at the base of the page - access is **denied** - This is a management only permission
 * Open the Device Monitor on `http://localhost:3000/device/monitor`
    * Unlock a door - access is **permitted** - This is a security only permission
@@ -784,7 +800,7 @@ function sendCommand (req, res) {
 
 #### Eve the Eavesdropper
 
-Log in as `eve@example.com` with the password `test`
+* From `http://localhost:3000`, log in asas `eve@example.com` with the password `test`
 * Click on the restricted access links at the base of the page - access is **denied**
 * Open the Device Monitor on `http://localhost:3000/device/monitor`
    * Unlock a door - access is **denied**
