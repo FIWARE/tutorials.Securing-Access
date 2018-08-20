@@ -310,8 +310,8 @@ Two organizations have also been set up by Alice:
 
 | Name       | Description                         | UUID                                 |
 |------------|-------------------------------------|--------------------------------------|
-| Security   | Security Group for Store Detectives |`security-0000-0000-0000-000000000000`|
-| Management | Management Group for Store Managers |`managers-0000-0000-0000-000000000000`|
+| Security   | Security Group for Store Detectives |`security-team-0000-0000-000000000000`|
+| Management | Management Group for Store Managers |`managers-team-0000-0000-000000000000`|
 
 One application, with appropriate roles and permissions has also been created:
 
@@ -670,7 +670,7 @@ request
 
 ```console
  curl -X GET \
-  'http://localhost:300/user?access_token={{access-token}}&action={{action}}&resource={{resource}}&app_id={{app-id}}'
+  'http://localhost:3005/user?access_token={{access-token}}&action={{action}}&resource={{resource}}&app_id={{app-id}}'
 ```
 
 Where :
