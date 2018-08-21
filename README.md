@@ -44,9 +44,12 @@ is also available.
     + [Logging in as an Application](#logging-in-as-an-application)
     + [Client Credentials Grant - Sample Code](#client-credentials-grant---sample-code)
     + [Client Credentials Grant - Running the Example](#client-credentials-grant---running-the-example)
-- [Access Control](#access-control)
-    + [Access Control - Sample Code](#access-control---sample-code)
-    + [Access Control - Running the Example](#access-control---running-the-example)
+- [PDP - Access Control](#pdp---access-control)
+  * [Authentication Access](#authentication-access)
+    + [Authentication Access - Sample Code](#authentication-access---sample-code)
+  * [Basic Authorization](#basic-authorization)
+    + [Basic Authorization - Sample Code](#basic-authorization---sample-code)
+  * [PDP Access Control - Running the Example](#pdp-access-control---running-the-example)
 
 
 # Securing Access
@@ -657,6 +660,73 @@ The response displays the details of the token. No User is involved.
 
 # PDP - Access Control
 
+There are three Levels of PDP Access Control:
+
+* Level 1: Authentication Access - Allow all actions to every signed in user and no actions to an anonymous user.
+* Level 2: Basic Authorization - Check which resources and verbs the currently logged in user should have access to
+* Level 3: Advanced Authorization - Fine grained control through [XACML](https://en.wikipedia.org/wiki/XACML)
+
+**Keyrock**  can be used to offer a simple Level 1 and 2 PDP on its own, and can offer level 3 combined with additional
+generic enablers. This tutorial will only be concerned with the logged in website itself.
+Securing other services in conjuction with a [PEP Proxy](https://fiware-pep-proxy.readthedocs.io/en/latest) will
+be dealt with in a later tutorial
+
+
+## Authentication Access
+
+If **Keyrock** (or any other OAuth2 provider) has successfully logged in, an `access_token` has been provided saying that
+the user exists. This information is sufficient to **authenticate** a User
+
+Level 1 PDP can be used in conjunction with any OAuth2 provider using any flow.
+
+
+If a user has authenticated using **Keyrock**, the freshness of the access token can be checked by making  a GET
+request to the `/user` endpoint.
+
+#### :four: Request
+
+```console
+ curl -X GET \
+  'http://localhost:3005/user?access_token={{access-token}}&app_id={{app-id}}'
+```
+
+A successful response indicates a valid `access_token`.
+
+### Authentication Access - Sample Code
+
+To check that a user has logged in, just store the `access_token` into session when they log in, and check for its existence:
+
+```javascript
+function pdpAuthentication (req, res , next){
+    res.locals.authorized = req.session.access_token ? true : false;
+    return next();
+}
+```
+
+To check whether a **Keyrock**  `access_token` has expired, you can try to retrieve the current user details on request:
+
+```javascript
+function pdpAuthentication (req, res , next){
+    const keyrockUserUrl = keyrockIPAddress + '/user' +
+        '?access_token=' +  req.session.access_token  +
+        '&app_id=' + clientId;
+    return oa.get(keyrockUserUrl)
+    .then(response => {
+        res.locals.authorized = true;
+        return next();
+     })
+    .catch(error => {
+        debug(error);
+        res.locals.authorized = false;
+        return next();
+    });
+}
+```
+
+## Basic Authorization
+
+Level 2 PDP can only be used with our own trusted instance of **Keyrock**, usually via the Password Grant flow.
+
 If we are using our own trusted instance of **Keyrock**, once a user has signed in and obtained an `access_token`, the
 `access_token` can be stored in session and used to retrieve user details on demand. The request for user details may be extended
 to include resource permissions. Using this information it is possible to permit or deny access to individual resources.
@@ -666,7 +736,7 @@ verb). We can retrieve extended user details including access permisions by addi
 request
 
 
-#### :four: Request
+#### :five: Request
 
 ```console
  curl -X GET \
@@ -713,12 +783,12 @@ to the `/app/price-change` endpoint within the `tutorial-dckr-site-0000-xpresswe
 
 
 
-### Access Control - Sample Code
+### Basic Authorization - Sample Code
 
 Keyrock can therefore be used as a PDP on its own, we merely need to check if the user has access to the resource and set a flag:
 
 ```javascript
-function accessControl (req, res , next, url=req.url){
+function pdpBasicAuthorization (req, res , next, url=req.url){
     const keyrockUserUrl = keyrockIPAddress + '/user' +
         '?access_token=' +  req.session.access_token +
         '&action='+ req.method +
@@ -743,11 +813,11 @@ This is an example of a Policy Enforcement Point (PEP):
 
 ```javascript
 function priceChange(req, res) {
-	if(!res.locals.authorized){
-		req.flash('error', 'Access Denied');
-		return res.redirect('/');
-	}
-	/// Continue with the normal flow of execution...
+  if(!res.locals.authorized){
+    req.flash('error', 'Access Denied');
+    return res.redirect('/');
+  }
+  /// Continue with the normal flow of execution...
 }
 ```
 
@@ -756,59 +826,92 @@ another example of a Policy Enforcement Point (PEP):
 
 ```javascript
 function sendCommand (req, res) {
-	if(!res.locals.authorized){
-		res.setHeader('Content-Type', 'application/json');
-		return res.status(403).send({ message: 'Forbidden' });
-	}
-	/// Continue with the normal flow of execution...
+  if(!res.locals.authorized){
+    res.setHeader('Content-Type', 'application/json');
+    return res.status(403).send({ message: 'Forbidden' });
+  }
+  /// Continue with the normal flow of execution...
 }
 ```
 
-### Access Control - Running the Example
+## PDP Access Control - Running the Example
 
-> **Note** Only four resources have been secured:
+> **Note** Only four resources have been secured at level 2:
 > * sending the unlock door command
 > * sending the ring bell command
 > * access to the price-change area
 > * access to the order-stock area
 
-
-#### Bob The Regional Manager
-
-* From `http://localhost:3000`, log in as `bob-the-manager@test.com` with the password `test`
-* Click on the restricted access links at the base of the page - access is **permitted** - This is a management only permission
-* Open the Device Monitor on `http://localhost:3000/device/monitor`
-   * Unlock a door - access is **denied**. - This is a security only permission
-   * Ring a bell - access is **permitted** - This is permitted to all users
-
-#### Charlie the Security Manager
-* From `http://localhost:3000`, log in as  `charlie-security@test.com` with the password `test`
-* Click on the restricted access links at the base of the page - access is **denied** - This is a management only permission
-* Open the Device Monitor on `http://localhost:3000/device/monitor`
-   * Unlock a door - access is **permitted** - This is a security only permission
-   * Ring a bell - access is **permitted** - This is permitted to all users
-
-
 #### Anonymous Access
 
 * Ensure that you are not signed in as any user.
-* Click on the restricted access links at the base of the page - access is **denied**
+
+##### Level 1 : Authenication Access
+* Click on any store page - access is **denied** for anonymous access
+* Open the Device Monitor on `http://localhost:3000/device/monitor`
+   * Switch on the lamp - access is **denied** for anonymous access
+
+##### Level 2 : Authorization Access
+* Click on the restricted access links at `http://localhost:3000`  - access is **denied**
 * Open the Device Monitor on `http://localhost:3000/device/monitor`
    * Unlock a door - access is **denied**
    * Ring a bell - access is **denied**
+   * Switch on the lamp - access is **denied**
 
 
 #### Eve the Eavesdropper
 
-* From `http://localhost:3000`, log in asas `eve@example.com` with the password `test`
-* Click on the restricted access links at the base of the page - access is **denied**
+Eve has an account, but no roles in the application.
+
+> **Note** As Eve has a recognized account, she gains full authenication access, even though
+> her account has no roles attached.
+
+* From `http://localhost:3000`, log in as `eve@example.com` with the password `test`
+
+##### Level 1 : Authenication Access
+* Click on any store page - access is **permitted** for any logged in users
+* Open the Device Monitor on `http://localhost:3000/device/monitor`
+   * Switch on the lamp - access is **permitted** for any logged in users
+
+##### Level 2 : Authorization Access
+* Click on the restricted access links at `http://localhost:3000` - access is **denied**
 * Open the Device Monitor on `http://localhost:3000/device/monitor`
    * Unlock a door - access is **denied**
    * Ring a bell - access is **denied**
 
+#### Bob The Regional Manager
 
+Bob has the **management** role
 
+* From `http://localhost:3000`, log in as `bob-the-manager@test.com` with the password `test`
 
+##### Level 1 : Authenication Access
+* Click on any store page - access is **permitted** for any logged in users
+* Open the Device Monitor on `http://localhost:3000/device/monitor`
+   * Switch on the lamp - access is **permitted** for any logged in users
+
+##### Level 2 : Authorization Access
+* Click on the restricted access links at `http://localhost:3000`  - access is **permitted** - This is a management only permission
+* Open the Device Monitor on `http://localhost:3000/device/monitor`
+   * Unlock a door - access is **denied**. - This is a security only permission
+   * Ring a bell - access is **permitted** - This is permitted to management users
+
+#### Charlie the Security Manager
+
+Charlie has the **security** role
+
+* From `http://localhost:3000`, log in as  `charlie-security@test.com` with the password `test`
+
+##### Level 1 : Authenication Access
+* Click on any store page - access is **permitted** for any logged in users
+* Open the Device Monitor on `http://localhost:3000/device/monitor`
+   * Switch on the lamp - access is **permitted** for any logged in users
+
+##### Level 2: Authorization Access
+* Click on the restricted access links at `http://localhost:3000` - access is **denied** - This is a management only permission
+* Open the Device Monitor on `http://localhost:3000/device/monitor`
+   * Unlock a door - access is **permitted** - This is a security only permission
+   * Ring a bell - access is **permitted** - This is permitted to security users
 
 ---
 
