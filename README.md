@@ -837,6 +837,7 @@ function sendCommand (req, res) {
 ## PDP Access Control - Running the Example
 
 > **Note** Only four resources have been secured at level 2:
+>
 > * sending the unlock door command
 > * sending the ring bell command
 > * access to the price-change area
@@ -846,7 +847,7 @@ function sendCommand (req, res) {
 
 * Ensure that you are not signed in as any user.
 
-##### Level 1 : Authenication Access
+##### Level 1 : Authentication Access
 * Click on any store page - access is **denied** for anonymous access
 * Open the Device Monitor on `http://localhost:3000/device/monitor`
    * Switch on the lamp - access is **denied** for anonymous access
@@ -863,21 +864,21 @@ function sendCommand (req, res) {
 
 Eve has an account, but no roles in the application.
 
-> **Note** As Eve has a recognized account, she gains full authenication access, even though
+> **Note** As Eve has a recognized account, she gains full authentication access, even though
 > her account has no roles attached.
 
 * From `http://localhost:3000`, log in as `eve@example.com` with the password `test`
 
-##### Level 1 : Authenication Access
+##### Level 1 : Authentication Access
 * Click on any store page - access is **permitted** for any logged in users
 * Open the Device Monitor on `http://localhost:3000/device/monitor`
-   * Switch on the lamp - access is **permitted** for any logged in users
+    * Switch on the lamp - access is **permitted** for any logged in users
 
 ##### Level 2 : Authorization Access
 * Click on the restricted access links at `http://localhost:3000` - access is **denied**
 * Open the Device Monitor on `http://localhost:3000/device/monitor`
-   * Unlock a door - access is **denied**
-   * Ring a bell - access is **denied**
+    * Unlock a door - access is **denied**
+    * Ring a bell - access is **denied**
 
 #### Bob The Regional Manager
 
@@ -885,16 +886,16 @@ Bob has the **management** role
 
 * From `http://localhost:3000`, log in as `bob-the-manager@test.com` with the password `test`
 
-##### Level 1 : Authenication Access
+##### Level 1 : Authentication Access
 * Click on any store page - access is **permitted** for any logged in users
 * Open the Device Monitor on `http://localhost:3000/device/monitor`
-   * Switch on the lamp - access is **permitted** for any logged in users
+    * Switch on the lamp - access is **permitted** for any logged in users
 
 ##### Level 2 : Authorization Access
 * Click on the restricted access links at `http://localhost:3000`  - access is **permitted** - This is a management only permission
 * Open the Device Monitor on `http://localhost:3000/device/monitor`
-   * Unlock a door - access is **denied**. - This is a security only permission
-   * Ring a bell - access is **permitted** - This is permitted to management users
+    * Unlock a door - access is **denied**. - This is a security only permission
+    * Ring a bell - access is **permitted** - This is permitted to management users
 
 #### Charlie the Security Manager
 
@@ -902,16 +903,16 @@ Charlie has the **security** role
 
 * From `http://localhost:3000`, log in as  `charlie-security@test.com` with the password `test`
 
-##### Level 1 : Authenication Access
+##### Level 1 : Authentication Access
 * Click on any store page - access is **permitted** for any logged in users
 * Open the Device Monitor on `http://localhost:3000/device/monitor`
-   * Switch on the lamp - access is **permitted** for any logged in users
+    * Switch on the lamp - access is **permitted** for any logged in users
 
 ##### Level 2: Authorization Access
 * Click on the restricted access links at `http://localhost:3000` - access is **denied** - This is a management only permission
 * Open the Device Monitor on `http://localhost:3000/device/monitor`
-   * Unlock a door - access is **permitted** - This is a security only permission
-   * Ring a bell - access is **permitted** - This is permitted to security users
+    * Unlock a door - access is **permitted** - This is a security only permission
+    * Ring a bell - access is **permitted** - This is permitted to security users
 
 ---
 
