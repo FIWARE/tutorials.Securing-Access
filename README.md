@@ -16,6 +16,7 @@ is also available.
 
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://www.getpostman.com/collections/66d8ba3abaf7319941b1)
 
+* このチュートリアルは[日本語](README.ja.md)でもご覧いただけます。
 
 # Contents
 
@@ -65,7 +66,7 @@ is also available.
 
 In order to secure access to application resources, it is necessary to know two things. Firstly, who is making the
 request and secondly is the requestor permitted to access the resource? The FIWARE **Keyrock** generic enabler uses
-uses [OAuth2](https://oauth.net/2/) to enable third-party applications to obtain limited access to services.
+[OAuth2](https://oauth.net/2/) to enable third-party applications to obtain limited access to services.
 **OAuth2** is the open standard for access delegation to grant access rights. It allows notifying a resource provider
 (e.g. the Knowage Generic Enabler) that the resource  owner (e.g. you) grants permission to a third-party
 (e.g. a Knowage Application) access to their information (e.g. the list of entities).
@@ -92,8 +93,8 @@ revoking access at any time, leaving the resource owner in control of who can ac
 
 Once the application is able to authenticate users, it is also possible to lock down access using access control
 mechanisms. Access control requires having an access policy - in other words defining who can do what.
-We have already defined roles and permisions within the [previous tutorial](https://github.com/Fiware/tutorials.Roles-Permissions),
-and now need to programatically enforce this policy by adding in a simple
+We have already defined roles and permissions within the [previous tutorial](https://github.com/Fiware/tutorials.Roles-Permissions),
+and now need to programmatically enforce this policy by adding in a simple
 Policy Decision Point (PDP) – which evaluates and issues authorization decisions, and then secure access by enforcing
 the decision using a Policy Enforcement Point (PEP).
 
@@ -152,7 +153,7 @@ command line functionality similar to a Linux distribution on Windows.
 
 
 This application adds OAuth2-driven security into the existing Stock Management and Sensors-based application
-created in [previous tutorials](https://github.com/Fiware/tutorials.IoT-Agent/) by using the data created in the first [security tutorial](https://github.com/Fiware/tutorials.Identity-Management/) and reading it programatically. It
+created in [previous tutorials](https://github.com/Fiware/tutorials.IoT-Agent/) by using the data created in the first [security tutorial](https://github.com/Fiware/tutorials.Identity-Management/) and reading it programmatically. It
 will make use of three FIWARE components - the [Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/),the [IoT Agent for UltraLight 2.0](http://fiware-iotagent-ul.readthedocs.io/en/latest/) and integrates the use of the [Keyrock](http://fiware-idm.readthedocs.io/) Generic enabler. Usage of the Orion Context Broker is sufficient for an application to qualify as *“Powered by FIWARE”*.
 
 Both the Orion Context Broker and the IoT Agent rely on open source [MongoDB](https://www.mongodb.com/) technology to keep persistence of the information they hold. We will also be using the dummy IoT devices created in the [previous tutorial](https://github.com/Fiware/tutorials.IoT-Sensors/). **Keyrock** uses its own [MySQL](https://www.mysql.com/) database.
@@ -432,7 +433,7 @@ The username (Alice) is returned as shown:
 
 
 
-The code delegates all the OAuth2 calls to a separate library [oauth2,js](https://github.com/Fiware/tutorials.Step-by-Step/blob/master/docker/context-provider/express-app/lib/oauth2.js). Every request includes the standard OAuth2 header and each
+The code delegates all the OAuth2 calls to a separate library [oauth2.js](https://github.com/Fiware/tutorials.Step-by-Step/blob/master/docker/context-provider/express-app/lib/oauth2.js). Every request includes the standard OAuth2 header and each
 request is wrapped in a promise to simplify the application code. The User Credentials flow is invoked using the
 `oa.getOAuthPasswordCredentials()` function - once an `access_token` is received, the user details are retrieved
  using a separate `oa.get()` call as shown:
@@ -668,7 +669,7 @@ There are three Levels of PDP Access Control:
 
 **Keyrock**  can be used to offer a simple Level 1 and 2 PDP on its own, and can offer level 3 combined with additional
 generic enablers. This tutorial will only be concerned with the logged in website itself.
-Securing other services in conjuction with a [PEP Proxy](https://fiware-pep-proxy.readthedocs.io/en/latest) will
+Securing other services in conjunction with a [PEP Proxy](https://fiware-pep-proxy.readthedocs.io/en/latest) will
 be dealt with in a later tutorial
 
 
@@ -732,7 +733,7 @@ If we are using our own trusted instance of **Keyrock**, once a user has signed 
 to include resource permissions. Using this information it is possible to permit or deny access to individual resources.
 
 As a reminder, **Keyrock** permissions are based on `resource` (e.g. URL) and `action` (which can be mapped to an HTTP
-verb). We can retrieve extended user details including access permisions by adding additional parameters to a `/user` GET
+verb). We can retrieve extended user details including access permissions by adding additional parameters to a `/user` GET
 request
 
 
