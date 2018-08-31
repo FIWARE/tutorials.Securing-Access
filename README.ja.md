@@ -278,7 +278,9 @@ Alice によって2つの組織 (organizations) が設定されました :
 | URL           | `http://localhost:3000`                |
 | RedirectURL   | `http://localhost:3000/login`          |
 
-時間を節約するために、[以前のチュートリアル](https://github.com/Fiware/tutorials.Roles-Permissions)の users と organizations を作成するデータがダウンロードされ、起動時に自動的に MySQL データベースに保存されるため、割り当てられた UUID は変更されず、データを再度入力する必要もありません。
+時間を節約するために、[以前のチュートリアル](https://github.com/Fiware/tutorials.Roles-Permissions)の users と organizations を作成するデータがダウンロードされ、起動時に自動的に MySQL データベースに保存されるため、割り当てられた UUIDs は変更されず、データを再度入力する必要もありません。
+
+**Keyrock** MySQL データベースは、ユーザ、パスワードなどの格納を含むアプリケーション・セキュリティのあらゆる側面を扱います。アクセス権を定義し、OAuth2 認証プロトコルを扱います。完全なデータベース関係図は[ここ](https://fiware.github.io/tutorials.Securing-Access/img/keyrock-db.png)にあります。
 
 ユーザ (users) や組織 (organizations)、アプリケーション (applications) を作成する方法について思い出すには、アカウント `alice-the-admin@test.com` と パスワード `test` を使用して、`http://localhost:3005/idm` にログインします。
 
@@ -305,7 +307,7 @@ dHV0b3JpYWwtZGNrci1zaXRlLTAwMDAteHByZXNzd2ViYXBwOnR1dG9yaWFsLWRja3Itc2l0ZS0wMDAw
 <a name="user-credentials-grant"></a>
 ## ユーザ資格情報のグラント (User Credentials Grant)
 
-パスワード・グラントとしても知られている、ユーザ資格情報のグラント・フローは、次の場合にのみ使用してください :
+パスワード・グラントとしても知られている、[ユーザ資格情報](https://tools.ietf.org/html/rfc6749#section-1.3.3)のグラント・フローは、次の場合にのみ使用してください :
 
 * ユーザが Web アプリケーションのクライアント経由でアプリケーションにログインしようとしている
 * Web アプリケーション・クライアントは絶対に信頼されている
@@ -425,7 +427,7 @@ function getUserFromAccessToken(req, accessToken){
 <a name="authorization-code-grant"></a>
 ## 認可コードのグラント (Authorization Code Grant)
 
-認可コードのグラント・フローは、クライアント (ここではチュートリアルの Web アプリケーション) がパスワードに直接アクセスする必要がない場合に使用できます。ユーザが誰であるかを知る必要があります。認可コードのグラントにより、ユーザは **Keyrock** などの認可サーバ (Authorization Server) にリダイレクトされ、そこにログインしてアクセスを許可します。レスポンスはアクセス・トークンと交換可能なアクセス・コードを返し、アクセス・トークンはユーザを識別します。
+[認可コード](https://tools.ietf.org/html/rfc6749#section-1.3.1)のグラント・フローは、クライアント (ここではチュートリアルの Web アプリケーション) がパスワードに直接アクセスする必要がない場合に使用できます。ユーザが誰であるかを知る必要があります。認可コードのグラントにより、ユーザは **Keyrock** などの認可サーバ (Authorization Server) にリダイレクトされ、そこにログインしてアクセスを許可します。レスポンスはアクセス・トークンと交換可能なアクセス・コードを返し、アクセス・トークンはユーザを識別します。
 
 ![](https://fiware.github.io/tutorials.Securing-Access/img/authcode-flow.png)
 
@@ -478,7 +480,7 @@ function authCodeGrantCallback(req,res){
 <a name="implicit-grant"></a>
 ## 暗黙のグラント (Implicit Grant)
 
-暗黙のグラント・フローは、認可グラント・フローの簡略化された形式です。**Keyrock** は、暫定アクセスコードを返すのではなく、直接 `access_token` を返します。これは、Authcode フローよりも安全性は低くなりますが、一部のクライアント・サイドのアプリケーションで使用できます。
+[暗黙](https://tools.ietf.org/html/rfc6749#section-1.3.2)のグラント・フローは、認可グラント・フローの簡略化された形式です。**Keyrock** は、暫定アクセスコードを返すのではなく、直接 `access_token` を返します。これは、Authcode フローよりも安全性は低くなりますが、一部のクライアント・サイドのアプリケーションで使用できます。
 
 ![](https://fiware.github.io/tutorials.Securing-Access/img/implicit-flow.png)
 
@@ -525,7 +527,7 @@ function implicitGrantCallback(req,res){
 <a name="client-credentials-grant"></a>
 ## クライアント資格情報のグラント (Client Credentials Grant)
 
-最終的なグラント・フローにはユーザは必要ありません。アプリケーションでは、ユーザではなく、アプリケーションにリソースへのアクセスが許可されるように、アプリケーションを識別する必要があります。このチュートリアルでは、このような方法で保護されたリソースはありませんが、完全性のためにこのフローが含まれています。
+最後のグラント・フローの、[クライアント資格情報](https://tools.ietf.org/html/rfc6749#section-1.3.4)のグラントにはユーザは必要ありません。アプリケーションでは、ユーザではなく、アプリケーションにリソースへのアクセスが許可されるように、アプリケーションを識別する必要があります。このチュートリアルでは、このような方法で保護されたリソースはありませんが、完全性のためにこのフローが含まれています。
 
 ![](https://fiware.github.io/tutorials.Securing-Access/img/client-credentials.png)
 
