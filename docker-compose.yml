@@ -86,7 +86,7 @@ services:
         - "CALLBACK_URL=http://localhost:3000/login"
 
   keyrock:
-    image: fiware/idm
+    image: fiware/idm:7.0.2
     container_name: fiware-keyrock
     hostname: keyrock
     networks:
@@ -104,7 +104,7 @@ services:
       - IDM_DB_USER=root
       - IDM_HOST=http://localhost:3005
       - IDM_PORT=3005
-      - IDM_HTTPS_ENABLED=true
+      - IDM_HTTPS_ENABLED=${IDM_HTTPS_ENABLED}
       - IDM_HTTPS_PORT=3443
       - IDM_ADMIN_USER=alice
       - IDM_ADMIN_EMAIL=alice-the-admin@test.com
