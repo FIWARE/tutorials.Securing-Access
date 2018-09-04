@@ -14,8 +14,7 @@ services:
       - mongo-db:/data
 
   orion:
-    image: fiware/orion:latest
-    hostname: orion
+    image: fiware/orion
     container_name: fiware-orion
     depends_on:
         - mongo-db
@@ -33,6 +32,7 @@ services:
     container_name: fiware-iot-agent
     depends_on:
         - mongo-db
+        - orion
     networks:
         - default
     ports:
@@ -55,6 +55,10 @@ services:
     image: fiware/tutorials.context-provider
     hostname: context-provider
     container_name: context-provider
+    depends_on:
+        - orion
+        - iot-agent
+        - keyrock
     networks:
       default:
         ipv4_address: 172.18.1.7
