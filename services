@@ -14,6 +14,11 @@ loadData () {
 	./provision-devices
 }
 
+stoppingContainers () {
+	echo "Stopping containers"
+	docker-compose --log-level ERROR  -p fiware down -v --remove-orphans
+}
+
 if (( $# != 1 )); then
     echo "Illegal number of parameters"
     echo "usage: services [create|start|stop]"
@@ -26,6 +31,7 @@ case "${command}" in
         echo "usage: services [create|start|stop]"
         ;;
     "start")
+		stoppingContainers
 		echo -e "Starting six containers \033[1;34mOrion\033[0m, \033[1;36mIoT-Agent\033[0m,\033[1;31mKeyrock\033[0m, \033[1;30mContext-Provider\033[0m and \033[1;30mMongoDB\033[0m and \033[1;30mMySQL\033[0m databases."
 		echo -e "- \033[1;34mOrion\033[0m is the context broker"
 		echo -e "- \033[1;36mIoT-Agent\033[0m is configured for the UltraLight Protocol"
@@ -38,9 +44,7 @@ case "${command}" in
 		echo -e "Now open \033[4mhttp://localhost:3000\033[0m"
 		;;
 	"stop")
-		echo "stopping containers"
-		docker-compose --log-level ERROR -p fiware down -v --remove-orphans
-
+		stoppingContainers
 		;;
 	"create")
 		echo "Obtaining MySQL image"
