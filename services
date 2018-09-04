@@ -14,10 +14,18 @@ loadData () {
 	./provision-devices
 }
 
+startContainers () {
+	echo ""
+	export IDM_HTTPS_ENABLED="$1" 
+	docker-compose --log-level ERROR -p fiware up -d --remove-orphans
+	echo ""
+}
+
 stoppingContainers () {
 	echo "Stopping containers"
 	docker-compose --log-level ERROR  -p fiware down -v --remove-orphans
 }
+
 
 if (( $# != 1 )); then
     echo "Illegal number of parameters"
@@ -37,8 +45,7 @@ case "${command}" in
 		echo -e "- \033[1;36mIoT-Agent\033[0m is configured for the UltraLight Protocol"
 		echo -e "- \033[1;30mContext-Provider\033[0m acts as a series of dummy IoT Sensors over HTTP"
 		echo -e "- \033[1;31mKeyrock\033[0m is an Identity Management Front-End"
-		echo ""
-		docker-compose --log-level ERROR -p fiware up -d --remove-orphans
+		startContainers false
 		loadData
 		echo ""
 		echo -e "Now open \033[4mhttp://localhost:3000\033[0m"
