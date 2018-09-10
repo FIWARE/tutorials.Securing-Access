@@ -145,16 +145,16 @@ Orion Context Broker と IoT Agent はオープンソースの [MongoDB](https:/
 
 ![](https://fiware.github.io/tutorials.Securing-Access/img/architecture.png)
 
-**在庫管理フロントエンド**にセキュリティを追加するために必要な設定情報は、関連する `docker-compose.yml` ファイルの `context-provider` セクションにあります。関連する変数を以下に示します。
+**在庫管理フロントエンド**にセキュリティを追加するために必要な設定情報は、関連する `docker-compose.yml` ファイルの `tutorial` セクションにあります。関連する変数を以下に示します。
 
 <a name="context-provider-security-configuration"></a>
-##  コンテキスト・プロバイダのセキュリティ構成
+##  チュートリアルのセキュリティ構成
 
 ```yaml
-  context-provider:
+  :
     image: fiware/tutorials.context-provider
-    hostname: context-provider
-    container_name: context-provider
+    hostname: tutorial 
+    container_name: fiware-tutorial
     networks:
       default:
         ipv4_address: 172.18.1.7
@@ -175,12 +175,12 @@ Orion Context Broker と IoT Agent はオープンソースの [MongoDB](https:/
         - "CALLBACK_URL=http://localhost:3000/login"
 ```
 
-`context-provider` コンテナは、2つのポートでリッスンしています :
+`tutorial` コンテナは、2つのポートでリッスンしています :
 
 * ポート `3000` が公開されているので、ダミー IoT デバイスを表示する Web ページが表示されます
 * ポート `3001` は純粋にチュートリアルアクセスのために公開されているため、cUrl または Postman は同じネットワークの一部ではなくても、UltraLight コマンドを作成できます
 
-`context-provider` コンテナは、次に示すように環境変数によってドライブされます :
+`tutorial` コンテナは、次に示すように環境変数によってドライブされます :
 
 | キー| 値  | 説明      |
 |-----|-----|-----------|
@@ -193,7 +193,7 @@ Orion Context Broker と IoT Agent はオープンソースの [MongoDB](https:/
 |KEYROCK_CLIENT_SECRET|`tutorial-dckr-site-0000-clientsecret`| このアプリケーションで **Keyrock** によって定義された、Client Secret |
 |CALLBACK_URL|`http://localhost:3000/login`| チャレンジが成功したときに **Keyrock** が使用するコールバック URL |
 
-YAML ファイルに記述されている、他の `context-provider`コンテナの設定値は、以前のチュートリアルで説明しています。
+YAML ファイルに記述されている、他の `tutorial`コンテナの設定値は、以前のチュートリアルで説明しています。
 
 別々の `KEYROCK_URL` と `KEYROCK_IP_ADDRESS` は、チュートリアルで使用されている単純化された Docker コンテナ化でのみ必要です。値 `localhost` を持つ `KEYROCK_URL` 変数は、コンテナによって外部に公開されている場所を参照しています。`KEYROCK_IP_ADDRESS` 変数は同じ場所を参照しますが、Docker ネットワークからアクセスします。同様に、ブラウザは同じマシンからアクセスされると見なされるので、`CALLBACK_URL` は `localhost` を含んでいます。これらの値はすべてプロダクション環境に適したプロキシと DNS 設定に置き換えてください。プロダクション環境はこのチュートリアルの対象外です。
 
