@@ -153,7 +153,7 @@ Orion Context Broker と IoT Agent はオープンソースの [MongoDB](https:/
 ```yaml
   :
     image: fiware/tutorials.context-provider
-    hostname: tutorial 
+    hostname: tutorial
     container_name: fiware-tutorial
     networks:
       default:
@@ -354,7 +354,7 @@ curl -iX POST \
 
 ```console
 curl -X GET \
-  'http://{{keyrock}}/user?access_token=a7e22dfe2bd7d883c8621b9eb50797a7f126eeab'
+  'http://localhost:3005/user?access_token=a7e22dfe2bd7d883c8621b9eb50797a7f126eeab'
 ```
 
 #### レスポンス
