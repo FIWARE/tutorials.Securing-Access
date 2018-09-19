@@ -18,7 +18,7 @@
   * [Docker](#docker)
   * [Cygwin](#cygwin)
 - [アーキテクチャ](#architecture)
-  * [コンテキスト・プロバイダのセキュリティ構成](#context-provider-security-configuration)
+  * [チュートリアルのセキュリティ構成](#tutorial-security-configuration)
 - [起動](#start-up)
     + [登場人物 (Dramatis Personae)](#dramatis-personae)
 - [OAuth2 グラント・フロー](#oauth2-grant-flows)
@@ -37,6 +37,11 @@
     + [アプリケーションとしてのログイン](#logging-in-as-an-application)
     + [クライアント資格情報のグラント - サンプル・コード](#client-credentials-grant---sample-code)
     + [クライアント資格情報のグラント - サンプルの実行](#client-credentials-grant---running-the-example)
+  * [トークンをリフレッシュ](#refresh-token)
+    + [アベイラビリティ・チェック](#availability-check)
+    + [アクセス・トークンをリフレッシュ](#refresh-access-token)
+    + [トークンのリフレッシュ - サンプル・コード](#refresh-token---sample-code)
+    + [トークンのリフレッシュ - サンプルの実行](#refresh-token---running-the-example)
 - [PDP - アクセス制御](#pdp---access-control)
   * [認証アクセス (Authentication Access)](#authentication-access)
     + [認証アクセス - サンプル・コード](#authentication-access---sample-code)
@@ -147,7 +152,7 @@ Orion Context Broker と IoT Agent はオープンソースの [MongoDB](https:/
 
 **在庫管理フロントエンド**にセキュリティを追加するために必要な設定情報は、関連する `docker-compose.yml` ファイルの `tutorial` セクションにあります。関連する変数を以下に示します。
 
-<a name="context-provider-security-configuration"></a>
+<a name="tutorial-security-configuration"></a>
 ##  チュートリアルのセキュリティ構成
 
 ```yaml
@@ -549,7 +554,7 @@ curl -iX POST \
 
 #### レスポンス
 
-レスポンスは、アプリケーション自体を識別するためのアクセス・コードを返します。
+レスポンスは、アプリケーション自体を識別するための `access_token` を返します。
 
 ```json
 {
@@ -580,6 +585,94 @@ function clientCredentialGrant(req, res){
 
 レスポンスにトークンの詳細が表示されます。ユーザは関与していません。
 
+<a name="refresh-token"></a>
+## トークンをリフレッシュ
+
+ユーザーが、適切なグラント・タイプを使用して、自分自身を識別すると、それらが使用している `access_token` が時間制限されていても、再度ログインする必要はありません。継続的なアクセスを提供するために、 [リフレッシュ・トークン](https://tools.ietf.org/html/rfc6749#section-1.5)のフローが定義され、ユーザが期限切れにしたトークンを新しいトークンに交換できるようになりました。この交換を提供することは、OAuth2 認証サーバにとって必須ではなく、すべてのグラント・タイプには適切ではありません。
+
+<a name="availability-check"></a>
+### アベイラビリティ・チェック
+
+リフレッシュ・トークンのフローが利用可能かどうかを確認するには、他のグラント・タイプの 1つを使用してログインするだけです。たとえば、ユーザ・クレデンシャルのフローを使用してログインする場合は、`grant_type=password` を使って POST リクエストを `oauth2/token` エンドポイントに送ります。
+
+#### :four: Request
+
+```console
+curl -iX POST \
+  'http://localhost:3005/oauth2/token' \
+  -H 'Accept: application/json' \
+  -H 'Authorization: Basic dHV0b3JpYWwtZGNrci1zaXRlLTAwMDAteHByZXNzd2ViYXBwOnR1dG9yaWFsLWRja3Itc2l0ZS0wMDAwLWNsaWVudHNlY3JldA==' \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+  --data "username=alice-the-admin@test.com&password=test&grant_type=password"
+```
+
+#### レスポンス
+
+ユーザを識別する `refresh_token` とともに、レスポンスは `refresh_token` を返します
+
+```json
+{
+    "access_token": "a7e22dfe2bd7d883c8621b9eb50797a7f126eeab",
+    "token_type": "Bearer",
+    "expires_in": 3599,
+    "refresh_token": "05e386edd9f95ed0e599c5004db8573e86dff874"
+}
+```
+
+<a name="refresh-access-token"></a>
+### アクセス・トークンをリフレッシュ
+
+上記のレスポンスからの `refresh_token=05e386edd9f95ed0e599c5004db8573e86dff874` は、後の使用のために保存されています。新しい `access_token` を取得するには (たとえば、前回の有効期限が過ぎると)、`refresh_token` が OAuth2 リフレッシュ・トークンのフローと `grant_type=refresh_token` で使われます。
+
+#### :five: リクエスト
+ ```console
+curl -iX POST \
+  'http://localhost:3005/oauth2/token' \
+  -H 'Accept: application/json' \
+  -H 'Authorization: Basic dHV0b3JpYWwtZGNrci1zaXRlLTAwMDAteHByZXNzd2ViYXBwOnR1dG9yaWFsLWRja3Itc2l0ZS0wMDAwLWNsaWVudHNlY3JldA==' \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+  --data "refresh_token=05e386edd9f95ed0e599c5004db8573e86dff874&grant_type=refresh_token"
+```
+ #### レスポンス
+
+レスポンスは以前のレスポンスと似ていますが、`access_token` と `refresh_token` が更新され、有効期限のウィンドウが前方に移動しました。
+
+```json
+{
+    "access_token": "298717d478980a2f0c3d2e9f9e222f1bb73e1c69",
+    "token_type": "Bearer",
+    "expires_in": 3599,
+    "refresh_token": "4611e3ab68b5b606eb7a43db6835de646bb7d11d"
+}
+```
+
+<a name="refresh-token---sample-code"></a>
+### トークンのリフレッシュ - サンプル・コード
+
+コードは、すべての OAuth2 呼び出しを別のライブラリ [oauth2.js](https://github.com/Fiware/tutorials.Step-by-Step/blob/master/docker/context-provider/express-app/lib/oauth2.js) に委譲します。すべてのリクエストには標準の OAuth2 ヘッダが含まれており、各リクエストはアプリケーションのコードを単純化するという約束でラップされています。リクエスト・トークンのフローは、`oa.getOAuthRefreshToken()` 関数を使用して呼び出されます。以前のトークンが期限切れになったときに新しい `access_token` を受け取るために使われた `refresh_token` です。
+
+```javascript
+function refreshTokenGrant(req, res){
+    return oa.getOAuthRefreshToken(req.session.refresh_token)
+    .then(results => {
+        // Store new Access Token
+    });
+}
+```
+
+<a name="refresh-token---running-the-example"></a>
+### トークンのリフレッシュ - サンプルの実行
+
+`http://localhost:3000/` ページを立ち上げ、ユーザ名とパスワードのフォームを記入することで、トークン・リフレッシュのフローをプログラムで呼び出すことができます。
+
+![](https://fiware.github.io/tutorials.Securing-Access/img/tutorial-log-in.png)
+
+レスポンスにより、画面の右上にユーザが表示され、トークンの詳細も画面に表示されます :
+
+![](https://fiware.github.io/tutorials.Securing-Access/img/tutorial-reponse.png)
+
+**Refresh Token** ボタンを押すと、ログインしたユーザの新しい `access_token` と `refresh_token` が返されます。
+
 <a name="pdp---access-control"></a>
 # PDP - アクセス制御
 
@@ -600,7 +693,7 @@ PDP アクセス制御には3つのレベルがあります :
 
 ユーザが **Keyrock** を使用して認証した場合、`/user` エンドポイントに GET リクエストを行うことでアクセス・トークンの最新性を確認できます。
 
-#### :four: リクエスト
+#### :six: リクエスト
 
 ```console
  curl -X GET \
@@ -650,7 +743,7 @@ function pdpAuthentication (req, res , next){
 
 **Keyrock** の許可は URL などの `resource` と HTTP 動詞にマッピング可能な `action` に基づいています。`/user` GET リクエストにパラメータを追加することで、アクセス・パーミッションを含む拡張されたユーザの詳細を取得できます。
 
-#### :five: リクエスト
+#### :seven: リクエスト
 
 ```console
  curl -X GET \
