@@ -152,7 +152,7 @@ will need to follow the instructions found  [here](https://docs.docker.com/compo
 ## Cygwin
 
 We will start up our services using a simple bash script. Windows users should download [cygwin](http://www.cygwin.com/) to provide a
-command line functionality similar to a Linux distribution on Windows.
+command-line functionality similar to a Linux distribution on Windows.
 
 # Architecture
 
@@ -169,7 +169,7 @@ Therefore the overall architecture will consist of the following elements:
 * The FIWARE [IoT Agent for UltraLight 2.0](http://fiware-iotagent-ul.readthedocs.io/en/latest/) which will receive southbound requests using [NGSI](https://fiware.github.io/specifications/OpenAPI/ngsiv2) and convert them to  [UltraLight 2.0](http://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual) commands for the devices
 * FIWARE [Keyrock](http://fiware-idm.readthedocs.io/) offer a complement Identity Management System including:
     * An OAuth2 authentication system for Applications and Users
-    * A website graphical front-end for Identity Management Administration
+    * A site graphical frontend for Identity Management Administration
     * An equivalent REST API for Identity Management via HTTP requests
 * The underlying [MongoDB](https://www.mongodb.com/) database :
     * Used by the **Orion Context Broker** to hold context data information such as data entities, subscriptions and registrations
@@ -219,7 +219,7 @@ The necessary configuration information for adding security to the **Stock Manag
 
 The `tutorial` container is listening on two ports:
 
-* Port `3000` is exposed so we can see the web-page displaying the Dummy IoT devices.
+* Port `3000` is exposed so we can see the web page displaying the Dummy IoT devices.
 * Port `3001` is exposed purely for tutorial access - so that cUrl or Postman can make UltraLight commands
   without being part of the same network.
 
@@ -230,7 +230,7 @@ The `tutorial` container is driven by environment variables as shown:
 |-----|-----|-----------|
 |DEBUG|`tutorial:*`| Debug flag used for logging |
 |WEB_APP_PORT|`3000`|Port used by web-app which displays the login screen & etc.|
-|KEYROCK_URL|`http://localhost`| This is URL of the **Keyrock** Web Front-End itself, used for redirection when forwarding users |
+|KEYROCK_URL|`http://localhost`| This is URL of the **Keyrock** Web frontend itself, used for redirection when forwarding users |
 |KEYROCK_IP_ADDRESS|`http://172.18.1.5`| This is URL of the **Keyrock** OAuth Communications |
 |KEYROCK_PORT|`3005` | This is the port that **Keyrock** is listening on.|
 |KEYROCK_CLIENT_ID|`tutorial-dckr-site-0000-xpresswebapp`| The Client ID defined by Keyrock for this application |
@@ -262,7 +262,7 @@ cd tutorials.Securing-Access
 >**Note** The initial creation of Docker images can take up to three minutes
 
 
-Thereafter, all services can be initialized from the command line by running the [services](https://github.com/Fiware/tutorials.Securing-Access/blob/master/services) Bash script provided within the repository:
+Thereafter, all services can be initialized from the command-line by running the [services](https://github.com/Fiware/tutorials.Securing-Access/blob/master/services) Bash script provided within the repository:
 
 ```console
 ./services <command>
@@ -480,7 +480,7 @@ function getUserFromAccessToken(req, accessToken){
 
 ### User Credentials - Running the Example
 
-It is possible to invoke the User Credentials grant flow programmatically, by bringing up the page `http://localhost:3000/` and filling out the user name and password form.
+It is possible to invoke the User Credentials grant flow programmatically, by bringing up the page `http://localhost:3000/` and filling out the username and password form.
 
 ![](https://fiware.github.io/tutorials.Securing-Access/img/tutorial-log-in.png)
 
@@ -500,8 +500,8 @@ an access-code which can be exchanged for an access-token which then identifies 
 ![](https://fiware.github.io/tutorials.Securing-Access/img/authcode-flow.png)
 
 This is an example of the sort of flow used when a third party (such as Travis-CI) asks you to log in
-using your github account. Travis never gains access to your password, but does receive details that you
-are who you claim to be from Github.
+using your GitHub account. Travis never gains access to your password, but does receive details that you
+are who you claim to be from GitHub.
 
 
 ### Authorization Code - Sample Code
@@ -753,7 +753,7 @@ function refreshTokenGrant(req, res){
 
 ### Refresh Token - Running the Example
 
-It is possible to invoke the Token Refresh flow programmatically, by bringing up the page `http://localhost:3000/` and filling out the user name and password form.
+It is possible to invoke the Token Refresh flow programmatically, by bringing up the page `http://localhost:3000/` and filling out the username and password form.
 
 ![](https://fiware.github.io/tutorials.Securing-Access/img/tutorial-log-in.png)
 
@@ -773,7 +773,7 @@ There are three Levels of PDP Access Control:
 * Level 3: Advanced Authorization - Fine grained control through [XACML](https://en.wikipedia.org/wiki/XACML)
 
 **Keyrock**  can be used to offer a simple Level 1 and 2 PDP on its own, and can offer level 3 combined with additional
-generic enablers. This tutorial will only be concerned with the logged in website itself.
+generic enablers. This tutorial will only be concerned with the logged in site itself.
 Securing other services in conjunction with a [PEP Proxy](https://fiware-pep-proxy.readthedocs.io/en/latest) will
 be dealt with in a later tutorial
 
