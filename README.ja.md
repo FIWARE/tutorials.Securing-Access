@@ -1,8 +1,10 @@
 [![FIWARE Banner](https://fiware.github.io/tutorials.Securing-Access/img/fiware.png)](https://www.fiware.org/developers)
 
 [![FIWARE Security](https://nexus.lab.fiware.org/repository/raw/public/badges/chapters/security.svg)](https://www.fiware.org/developers/catalogue/)
-[![License: MIT](https://img.shields.io/github/license/fiware/tutorials.Time-Series-Data.svg)](https://opensource.org/licenses/MIT)
-[![Documentation](https://readthedocs.org/projects/fiware-tutorials/badge/?version=latest)](https://fiware-tutorials.readthedocs.io/en/latest)
+[![License: MIT](https://img.shields.io/github/license/fiware/tutorials.Securing-Access.svg)](https://opensource.org/licenses/MIT)
+[![Support badge](https://nexus.lab.fiware.org/repository/raw/public/badges/stackoverflow/fiware.svg)](https://stackoverflow.com/questions/tagged/fiware)
+<br/>
+[![Documentation](https://img.shields.io/readthedocs/fiware-tutorials.svg)](https://fiware-tutorials.rtfd.io)
 
 このチュートリアルでは、[以前のチュートリアル](https://github.com/Fiware/tutorials.Roles-Permissions)で作成したエンティティを使用して、FIWARE アプリケーションへのアクセスを保護します。このチュートリアルでは、さまざまな OAuth2 グラント・フローの適切な使用方法と、**Keyrock** generic enabler を認可サーバ (Authorization Server) として使用し、ユーザを識別する方法について説明します。**Keyrock** はアクセスを制限するための Policy Decision Point (PDP) としても使用されます。
 
