@@ -18,7 +18,7 @@ The tutorial discusses code showing how to integrate Keyrock within a web
 application and demonstrates examples of Authorization Server interactions using
 the **Keyrock** GUI. Some [cUrl](https://ec.haxx.se/) commands are also used to
 access the **Keyrock** REST API -
-[Postman documentation](http://fiware.github.io/tutorials.Securing-Access/) is
+[Postman documentation](https://fiware.github.io/tutorials.Securing-Access/) is
 also available.
 
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://www.getpostman.com/collections/66d8ba3abaf7319941b1)
@@ -196,8 +196,8 @@ the data created in the first
 [security tutorial](https://github.com/Fiware/tutorials.Identity-Management/)
 and reading it programmatically. It will make use of three FIWARE components -
 the [Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/),the
-[IoT Agent for UltraLight 2.0](http://fiware-iotagent-ul.readthedocs.io/en/latest/)
-and integrates the use of the [Keyrock](http://fiware-idm.readthedocs.io/)
+[IoT Agent for UltraLight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/)
+and integrates the use of the [Keyrock](https://fiware-idm.readthedocs.io/)
 Generic enabler. Usage of the Orion Context Broker is sufficient for an
 application to qualify as _“Powered by FIWARE”_.
 
@@ -214,13 +214,13 @@ Therefore the overall architecture will consist of the following elements:
     will receive requests using
     [NGSI](https://fiware.github.io/specifications/OpenAPI/ngsiv2)
 -   The FIWARE
-    [IoT Agent for UltraLight 2.0](http://fiware-iotagent-ul.readthedocs.io/en/latest/)
+    [IoT Agent for UltraLight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/)
     which will receive southbound requests using
     [NGSI](https://fiware.github.io/specifications/OpenAPI/ngsiv2) and convert
     them to
-    [UltraLight 2.0](http://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
+    [UltraLight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
     commands for the devices
--   FIWARE [Keyrock](http://fiware-idm.readthedocs.io/) offer a complement
+-   FIWARE [Keyrock](https://fiware-idm.readthedocs.io/) offer a complement
     Identity Management System including:
     -   An OAuth2 authentication system for Applications and Users
     -   A site graphical frontend for Identity Management Administration
@@ -240,7 +240,7 @@ Therefore the overall architecture will consist of the following elements:
 -   A webserver acting as set of
     [dummy IoT devices](https://github.com/Fiware/tutorials.IoT-Sensors) using
     the
-    [UltraLight 2.0](http://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
+    [UltraLight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
     protocol running over HTTP - access to certain resources is restricted.
 
 Since all interactions between the elements are initiated by HTTP requests, the
@@ -635,7 +635,7 @@ The user must then authorize the request
 The response displays the user on the top right of the screen, details of the
 token are also flashed onto the screen.
 
-> **Note** Unless you deliberately log out of **Keyrock**
+> **Note** Unless you deliberately log out of **Keyrock** >
 > `http://localhost:3005`, the existing **Keyrock** session which has already
 > permitted access will be used for subsequent authorization requests, so the
 > **Keyrock** login screen will not be shown again.
@@ -691,7 +691,7 @@ The user must then authorize the request
 The response displays the user on the top right of the screen, details of the
 token are also flashed onto the screen.
 
-> **Note** Unless you deliberately log out of **Keyrock**
+> **Note** Unless you deliberately log out of **Keyrock** >
 > `http://localhost:3005`, the existing **Keyrock** session which has already
 > permitted access will be used for subsequent authorization request.
 

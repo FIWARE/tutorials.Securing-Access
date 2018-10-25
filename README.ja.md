@@ -8,7 +8,7 @@
 
 このチュートリアルでは、[以前のチュートリアル](https://github.com/Fiware/tutorials.Roles-Permissions)で作成したエンティティを使用して、FIWARE アプリケーションへのアクセスを保護します。このチュートリアルでは、さまざまな OAuth2 グラント・フローの適切な使用方法と、**Keyrock** generic enabler を認可サーバ (Authorization Server) として使用し、ユーザを識別する方法について説明します。**Keyrock** はアクセスを制限するための Policy Decision Point (PDP) としても使用されます。
 
-チュートリアルでは、**Keyrock** を Web アプリケーションに統合する方法を示すコードについて説明し、**Keyrock** GUI を使用した認可サーバとの対話の例を示します。いくつかの [cUrl](https://ec.haxx.se/) コマンドは、**Keyrock** REST API へのアクセスにも使用しようします。[Postman documentation](http://fiware.github.io/tutorials.Securing-Access/) も利用できます。
+チュートリアルでは、**Keyrock** を Web アプリケーションに統合する方法を示すコードについて説明し、**Keyrock** GUI を使用した認可サーバとの対話の例を示します。いくつかの [cUrl](https://ec.haxx.se/) コマンドは、**Keyrock** REST API へのアクセスにも使用しようします。[Postman documentation](https://fiware.github.io/tutorials.Securing-Access/) も利用できます。
 
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://www.getpostman.com/collections/66d8ba3abaf7319941b1)
 
@@ -124,15 +124,15 @@ OAuth2 の背後にある理由は、ユーザに完全なアクセス権を与�
 <a name="architecture"></a>
 # アーキテクチャ
 
-このアプリケーションは、最初の[セキュリティ・チュートリアル](https://github.com/Fiware/tutorials.Identity-Management/)で作成したデータを使用し、それをプログラムで読み込むことで、[以前のチュートリアル](https://github.com/Fiware/tutorials.IoT-Agent/)で作成した既存の在庫管理およびセンサ・ベースのアプリケーションに OAuth2 主導のセキュリティを追加します。[Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/), [IoT Agent for UltraLight 2.0](http://fiware-iotagent-ul.readthedocs.io/en/latest/) と[Keyrock](http://fiware-idm.readthedocs.io/) Generic enabler の 3つの FIWARE コンポーネントを使用し、これらを統合します。アプリケーションを *"Powered by FIWARE"* と認定するには、Orion Context Broker を使用するだけで十分です。
+このアプリケーションは、最初の[セキュリティ・チュートリアル](https://github.com/Fiware/tutorials.Identity-Management/)で作成したデータを使用し、それをプログラムで読み込むことで、[以前のチュートリアル](https://github.com/Fiware/tutorials.IoT-Agent/)で作成した既存の在庫管理およびセンサ・ベースのアプリケーションに OAuth2 主導のセキュリティを追加します。[Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/), [IoT Agent for UltraLight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/) と[Keyrock](https://fiware-idm.readthedocs.io/) Generic enabler の 3つの FIWARE コンポーネントを使用し、これらを統合します。アプリケーションを *"Powered by FIWARE"* と認定するには、Orion Context Broker を使用するだけで十分です。
 
 Orion Context Broker と IoT Agent はオープンソースの [MongoDB](https://www.mongodb.com/) 技術を利用して、保持している情報の永続性を保ちます。[以前のチュートリアル](https://github.com/Fiware/tutorials.IoT-Sensors/)で作成したダミー IoT デバイスも使用します。**Keyrock** は独自の [MySQL](https://www.mysql.com/) データベースを使用します。
 
 したがって、全体的なアーキテクチャは次の要素で構成されます :
 
 * FIWARE [Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/) は、[NGSI](https://fiware.github.io/specifications/OpenAPI/ngsiv2) を使用してリクエストを受信します
-* [IoT Agent for UltraLight 2.0](http://fiware-iotagent-ul.readthedocs.io/en/latest/) は、[NGSI](https://fiware.github.io/specifications/OpenAPI/ngsiv2) を使用してサウスバウンド・リクエストを受信し、それをデバイスのために[UltraLight 2.0](http://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual) に変換します。
-* FIWARE [Keyrock](http://fiware-idm.readthedocs.io/) は、以下を含んだ、補完的な ID 管理システムを提供します :
+* [IoT Agent for UltraLight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/) は、[NGSI](https://fiware.github.io/specifications/OpenAPI/ngsiv2) を使用してサウスバウンド・リクエストを受信し、それをデバイスのために[UltraLight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual) に変換します。
+* FIWARE [Keyrock](https://fiware-idm.readthedocs.io/) は、以下を含んだ、補完的な ID 管理システムを提供します :
     * アプリケーションとユーザのための OAuth2 認証システム
     * ID 管理のための Web サイトのグラフィカル・フロントエンド
     * HTTP リクエストによる ID 管理用の同等の REST API
@@ -146,7 +146,7 @@ Orion Context Broker と IoT Agent はオープンソースの [MongoDB](https:/
     * 各店舗でどの商品を購入できるかを示します
     * ユーザが製品を"購入"して在庫数を減らすことができます
     * 許可されたユーザを制限されたエリアに入れることができます
-* HTTP を介して実行されている [UltraLight 2.0](http://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual) プロトコルを使用する[ダミー IoT デバイス](https://github.com/Fiware/tutorials.IoT-Sensors)のセットとして機能する Web サーバ。特定のリソースへのアクセスが制限されています。
+* HTTP を介して実行されている [UltraLight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual) プロトコルを使用する[ダミー IoT デバイス](https://github.com/Fiware/tutorials.IoT-Sensors)のセットとして機能する Web サーバ。特定のリソースへのアクセスが制限されています。
 
 要素間のすべての対話は HTTP リクエストによって開始されるため、エンティティはコンテナ化され、公開されたポートから実行されます。
 
