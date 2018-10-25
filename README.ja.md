@@ -124,7 +124,7 @@ OAuth2 の背後にある理由は、ユーザに完全なアクセス権を与�
 <a name="architecture"></a>
 # アーキテクチャ
 
-このアプリケーションは、最初の[セキュリティ・チュートリアル](https://github.com/Fiware/tutorials.Identity-Management/)で作成したデータを使用し、それをプログラムで読み込むことで、[以前のチュートリアル](https://github.com/Fiware/tutorials.IoT-Agent/)で作成した既存の在庫管理およびセンサ・ベースのアプリケーションに OAuth2 主導のセキュリティを追加します。[Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/), [IoT Agent for UltraLight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/) と[Keyrock](https://fiware-idm.readthedocs.io/) Generic enabler の 3つの FIWARE コンポーネントを使用し、これらを統合します。アプリケーションを *"Powered by FIWARE"* と認定するには、Orion Context Broker を使用するだけで十分です。
+このアプリケーションは、最初の[セキュリティ・チュートリアル](https://github.com/Fiware/tutorials.Identity-Management/)で作成したデータを使用し、それをプログラムで読み込むことで、[以前のチュートリアル](https://github.com/Fiware/tutorials.IoT-Agent/)で作成した既存の在庫管理およびセンサ・ベースのアプリケーションに OAuth2 主導のセキュリティを追加します。[Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/), [IoT Agent for UltraLight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/) と[Keyrock](https://fiware-idm.readthedocs.io/en/latest/) Generic enabler の 3つの FIWARE コンポーネントを使用し、これらを統合します。アプリケーションを *"Powered by FIWARE"* と認定するには、Orion Context Broker を使用するだけで十分です。
 
 Orion Context Broker と IoT Agent はオープンソースの [MongoDB](https://www.mongodb.com/) 技術を利用して、保持している情報の永続性を保ちます。[以前のチュートリアル](https://github.com/Fiware/tutorials.IoT-Sensors/)で作成したダミー IoT デバイスも使用します。**Keyrock** は独自の [MySQL](https://www.mysql.com/) データベースを使用します。
 
@@ -132,7 +132,7 @@ Orion Context Broker と IoT Agent はオープンソースの [MongoDB](https:/
 
 * FIWARE [Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/) は、[NGSI](https://fiware.github.io/specifications/OpenAPI/ngsiv2) を使用してリクエストを受信します
 * [IoT Agent for UltraLight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/) は、[NGSI](https://fiware.github.io/specifications/OpenAPI/ngsiv2) を使用してサウスバウンド・リクエストを受信し、それをデバイスのために[UltraLight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual) に変換します。
-* FIWARE [Keyrock](https://fiware-idm.readthedocs.io/) は、以下を含んだ、補完的な ID 管理システムを提供します :
+* FIWARE [Keyrock](https://fiware-idm.readthedocs.io/en/latest/) は、以下を含んだ、補完的な ID 管理システムを提供します :
     * アプリケーションとユーザのための OAuth2 認証システム
     * ID 管理のための Web サイトのグラフィカル・フロントエンド
     * HTTP リクエストによる ID 管理用の同等の REST API
