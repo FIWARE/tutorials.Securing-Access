@@ -553,7 +553,7 @@ curl -X GET \
 ### ユーザ資格情報 - サンプル・コード
 
 このコードは、すべての OAuth2 呼び出しを別のライブラリ
-[oauth2.js](https://github.com/Fiware/tutorials.Step-by-Step/blob/master/docker/context-provider/express-app/lib/oauth2.js)
+[oauth2.js](https://github.com/Fiware/tutorials.Step-by-Step/blob/master/context-provider/lib/oauth2.js)
 に委譲します。すべてのリクエストには標準の OAuth2 ヘッダが含まれており、各リクエ
 ストはアプリケーションのコードを単純化するという約束でラップされています。ユーザ
 資格情報のフローは、`oa.getOAuthPasswordCredentials()` 関数を使用して呼び出され
@@ -897,7 +897,7 @@ curl -iX POST \
 ### トークンのリフレッシュ - サンプル・コード
 
 コードは、すべての OAuth2 呼び出しを別のライブラリ
-[oauth2.js](https://github.com/Fiware/tutorials.Step-by-Step/blob/master/docker/context-provider/express-app/lib/oauth2.js)
+[oauth2.js](https://github.com/Fiware/tutorials.Step-by-Step/blob/master/context-provider/lib/oauth2.js)
 に委譲します。すべてのリクエストには標準の OAuth2 ヘッダが含まれており、各リクエ
 ストはアプリケーションのコードを単純化するという約束でラップされています。リクエ
 スト・トークンのフローは、`oa.getOAuthRefreshToken()` 関数を使用して呼び出されま

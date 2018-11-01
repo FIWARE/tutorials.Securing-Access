@@ -519,7 +519,7 @@ The username (Alice) is returned as shown:
 ### User Credentials - Sample Code
 
 The code delegates all the OAuth2 calls to a separate library
-[oauth2.js](https://github.com/Fiware/tutorials.Step-by-Step/blob/master/docker/context-provider/express-app/lib/oauth2.js).
+[oauth2.js](https://github.com/Fiware/tutorials.Step-by-Step/blob/master/context-provider/lib/oauth2.js).
 Every request includes the standard OAuth2 header and each request is wrapped in
 a promise to simplify the application code. The User Credentials flow is invoked
 using the `oa.getOAuthPasswordCredentials()` function - once an `access_token`
@@ -832,7 +832,7 @@ The response is similar to the previous response, but the `access_token` and
 ### Refresh Token - Sample Code
 
 The code delegates all the OAuth2 calls to a separate library
-[oauth2.js](https://github.com/Fiware/tutorials.Step-by-Step/blob/master/docker/context-provider/express-app/lib/oauth2.js).
+[oauth2.js](https://github.com/Fiware/tutorials.Step-by-Step/blob/master/context-provider/lib/oauth2.js).
 Every request includes the standard OAuth2 header and each request is wrapped in
 a promise to simplify the application code. The Request Token flow is invoked
 using the `oa.getOAuthRefreshToken()` function - the previously received
