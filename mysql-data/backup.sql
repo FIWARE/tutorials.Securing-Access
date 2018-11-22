@@ -102,6 +102,8 @@ CREATE TABLE `authzforce` (
 
 LOCK TABLES `authzforce` WRITE;
 /*!40000 ALTER TABLE `authzforce` DISABLE KEYS */;
+INSERT INTO `authzforce` VALUES 
+('NYP5CukQEei0BgJCrBIBDA','d72f7c1c-b250-431a-82c5-c3afe65a96e8',1,'tutorial-dckr-site-0000-xpresswebapp');
 /*!40000 ALTER TABLE `authzforce` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -127,6 +129,9 @@ CREATE TABLE `eidas_credentials` (
   `organization_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `organization_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `oauth_client_id` char(36) CHARACTER SET latin1 COLLATE latin1_bin DEFAULT NULL,
+  `organization_nif` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sp_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `attributes_list` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`id`),
   UNIQUE KEY `oauth_client_id` (`oauth_client_id`),
   CONSTRAINT `eidas_credentials_ibfk_1` FOREIGN KEY (`oauth_client_id`) REFERENCES `oauth_client` (`id`) ON DELETE CASCADE
@@ -186,6 +191,7 @@ CREATE TABLE `oauth_access_token` (
   `oauth_client_id` char(36) CHARACTER SET latin1 COLLATE latin1_bin DEFAULT NULL,
   `user_id` char(36) CHARACTER SET latin1 COLLATE latin1_bin DEFAULT NULL,
   `iot_id` varchar(255) DEFAULT NULL,
+  `authorization_code` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`access_token`),
   UNIQUE KEY `access_token` (`access_token`),
   KEY `oauth_client_id` (`oauth_client_id`),
@@ -204,14 +210,14 @@ CREATE TABLE `oauth_access_token` (
 LOCK TABLES `oauth_access_token` WRITE;
 /*!40000 ALTER TABLE `oauth_access_token` DISABLE KEYS */;
 INSERT INTO `oauth_access_token` VALUES 
-('15682667caa4bb5ac15056fee3836b2980288bf2','2016-07-30 12:14:21',NULL,NULL,NULL,NULL,'8ca60ce9-32f9-42d6-a013-a19b3af0c13d','admin',NULL),
-('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa','2016-07-30 12:14:21',NULL,NULL,NULL,NULL,'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa','alice',NULL),
-('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb','2016-07-30 12:14:21',NULL,NULL,NULL,NULL,'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb','bob',NULL),
-('cccccccccccccccccccccccccccccccccccccccc','2016-07-30 12:14:21',NULL,NULL,NULL,NULL,'cccccccc-cccc-cccc-cccc-cccccccccccc','charlie',NULL),
-('d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1','2016-07-30 12:14:21',NULL,NULL,NULL,NULL,'d1d1d1d1-dddd-dddd-dddd-d1d1d1d1d1d1','detective1',NULL),
-('d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2','2016-07-30 12:14:21',NULL,NULL,NULL,NULL,'d2d2d2d2-dddd-dddd-dddd-d2d2d2d2d2d2','detective2',NULL),
-('m1m1m1m1m1m1m1m1m1m1m1m1m1m1m1m1m1m1m1m1','2016-07-30 12:14:21',NULL,NULL,NULL,NULL,'m1m1m1m1-mmmm-mmmm-mmmm-m1m1m1m1m1m1','manager1',NULL),
-('m2m2m2m2m2m2m2m2m2m2m2m2m2m2m2m2m2m2m2m2','2016-07-30 12:14:21',NULL,NULL,NULL,NULL,'m2m2m2m2-mmmm-mmmm-mmmm-m2m2m2m2m2m2','manager2',NULL);
+('15682667caa4bb5ac15056fee3836b2980288bf2','2016-07-30 12:14:21',NULL,NULL,NULL,NULL,'8ca60ce9-32f9-42d6-a013-a19b3af0c13d','admin',NULL,NULL),
+('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa','2016-07-30 12:14:21',NULL,NULL,NULL,NULL,'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa','alice',NULL,NULL),
+('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb','2016-07-30 12:14:21',NULL,NULL,NULL,NULL,'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb','bob',NULL,NULL),
+('cccccccccccccccccccccccccccccccccccccccc','2016-07-30 12:14:21',NULL,NULL,NULL,NULL,'cccccccc-cccc-cccc-cccc-cccccccccccc','charlie',NULL,NULL),
+('d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1','2016-07-30 12:14:21',NULL,NULL,NULL,NULL,'d1d1d1d1-dddd-dddd-dddd-d1d1d1d1d1d1','detective1',NULL,NULL),
+('d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2','2016-07-30 12:14:21',NULL,NULL,NULL,NULL,'d2d2d2d2-dddd-dddd-dddd-d2d2d2d2d2d2','detective2',NULL,NULL),
+('m1m1m1m1m1m1m1m1m1m1m1m1m1m1m1m1m1m1m1m1','2016-07-30 12:14:21',NULL,NULL,NULL,NULL,'m1m1m1m1-mmmm-mmmm-mmmm-m1m1m1m1m1m1','manager1',NULL,NULL),
+('m2m2m2m2m2m2m2m2m2m2m2m2m2m2m2m2m2m2m2m2','2016-07-30 12:14:21',NULL,NULL,NULL,NULL,'m2m2m2m2-mmmm-mmmm-mmmm-m2m2m2m2m2m2','manager2',NULL,NULL);
 
 /*!40000 ALTER TABLE `oauth_access_token` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -270,8 +276,8 @@ CREATE TABLE `oauth_client` (
   `client_type` varchar(15) DEFAULT NULL,
   `scope` varchar(80) DEFAULT NULL,
   `extra` json DEFAULT NULL,
-  `token_type` varchar(15) DEFAULT 'bearer',
-  `jwt_secret` varchar(255) DEFAULT NULL,
+  `token_types` varchar(2000) DEFAULT 'bearer',
+  `jwt_secret` varchar(2000) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -309,6 +315,8 @@ CREATE TABLE `oauth_refresh_token` (
   `oauth_client_id` char(36) CHARACTER SET latin1 COLLATE latin1_bin DEFAULT NULL,
   `user_id` char(36) CHARACTER SET latin1 COLLATE latin1_bin DEFAULT NULL,
   `iot_id` varchar(255) DEFAULT NULL,
+  `valid` tinyint(1) DEFAULT NULL,
+  `authorization_code` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`refresh_token`),
   UNIQUE KEY `refresh_token` (`refresh_token`),
   KEY `oauth_client_id` (`oauth_client_id`),
@@ -326,7 +334,7 @@ CREATE TABLE `oauth_refresh_token` (
 
 LOCK TABLES `oauth_refresh_token` WRITE;
 /*!40000 ALTER TABLE `oauth_refresh_token` DISABLE KEYS */;
-INSERT INTO `oauth_refresh_token` VALUES ('4eb1f99f80f37c81a8ef85d92eae836919887e1e','2018-08-13 11:14:21',NULL,'8ca60ce9-32f9-42d6-a013-a19b3af0c13d','admin',NULL);
+INSERT INTO `oauth_refresh_token` VALUES ('4eb1f99f80f37c81a8ef85d92eae836919887e1e','2018-08-13 11:14:21',NULL,'8ca60ce9-32f9-42d6-a013-a19b3af0c13d','admin',NULL,NULL,NULL);
 /*!40000 ALTER TABLE `oauth_refresh_token` ENABLE KEYS */;
 UNLOCK TABLES;
 
