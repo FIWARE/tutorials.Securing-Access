@@ -875,9 +875,10 @@ There are three Levels of PDP Access Control:
     [XACML](https://en.wikipedia.org/wiki/XACML)
 
 **Keyrock** can be used to offer a simple Level 1 and 2 PDP on its own, and can
-offer level 3 combined with additional [generic enablers](https://github.com/Fiware/tutorials.XACML-Access-Rules). This tutorial will only
-be concerned with the logged in site itself. Securing other services in
-conjunction with a
+offer level 3 combined with additional
+[generic enablers](https://github.com/Fiware/tutorials.XACML-Access-Rules). This
+tutorial will only be concerned with the logged in site itself. Securing other
+services in conjunction with a
 [PEP Proxy](https://fiware-pep-proxy.readthedocs.io/en/latest) will be dealt
 with in a [later tutorial](https://github.com/Fiware/tutorials.PEP-Proxy)
 
