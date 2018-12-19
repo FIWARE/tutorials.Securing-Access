@@ -93,7 +93,7 @@ services:
         - "CALLBACK_URL=http://localhost:3000/login"
 
   keyrock:
-    image: fiware/idm:7.5.0
+    image: fiware/idm:7.5.1
     container_name: fiware-keyrock
     hostname: keyrock
     networks:
