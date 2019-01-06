@@ -378,6 +378,19 @@ Bash スクリプトを実行することによって、コマンドラインか
     -   Detective1 (警備員 1)
     -   Detective2 (警備員 2)
 
+次の`example.com` のメンバはアカウントにサインアップしましたが、アクセスを許可す
+る理由はありません
+
+-   Eve - 盗聴者のイブ
+-   Mallory - 悪意のある攻撃者のマロリー
+-   Rob - 強盗のロブ
+
+
+<details>
+  <summary>
+   詳細 <b>(クリックして拡大)</b>
+  </summary>
+
 | 名前       | E メール                  | パスワード |
 | ---------- | ------------------------- | ---------- |
 | alice      | alice-the-admin@test.com  | `test`     |
@@ -388,18 +401,13 @@ Bash スクリプトを実行することによって、コマンドラインか
 | detective1 | detective1@test.com       | `test`     |
 | detective2 | detective2@test.com       | `test`     |
 
-次の`example.com` のメンバはアカウントにサインアップしましたが、アクセスを許可す
-る理由はありません
-
--   Eve - 盗聴者のイブ
--   Mallory - 悪意のある攻撃者のマロリー
--   Rob - 強盗のロブ
-
 | 名前    | E メール            | パスワード |
 | ------- | ------------------- | ---------- |
 | eve     | eve@example.com     | `test`     |
 | mallory | mallory@example.com | `test`     |
 | rob     | rob@example.com     | `test`     |
+
+</details>
 
 Alice によって 2 つの組織 (organizations) が設定されました :
 
