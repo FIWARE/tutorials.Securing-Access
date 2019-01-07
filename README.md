@@ -357,7 +357,7 @@ Application
     store detectives under him:
     -   Detective1
     -   Detective2
-    
+
 The following people at `example.com` have signed up for accounts, but have no
 reason to be granted access
 
@@ -365,7 +365,7 @@ reason to be granted access
 -   Mallory - Mallory the malicious attacker
 -   Rob - Rob the Robber
 
-    
+
 <details>
   <summary>
    For more details <b>(Click to expand)</b>
@@ -1173,4 +1173,4 @@ Charlie has the **security** role
 
 ## License
 
-[MIT](LICENSE) © FIWARE Foundation e.V.
+[MIT](LICENSE) © 2018-2019 FIWARE Foundation e.V.
