@@ -25,7 +25,10 @@ also available.
 
 -   このチュートリアルは[日本語](README.ja.md)でもご覧いただけます。
 
-# Contents
+## Contents
+
+<details>
+<summary><strong>Details</strong></summary>
 
 -   [Securing Access](#securing-access)
     -   [Standard Concepts of Identity Management](#standard-concepts-of-identity-management)
@@ -63,6 +66,8 @@ also available.
     -   [Basic Authorization](#basic-authorization)
         -   [Basic Authorization - Sample Code](#basic-authorization---sample-code)
     -   [PDP Access Control - Running the Example](#pdp-access-control---running-the-example)
+
+</details>
 
 # Securing Access
 

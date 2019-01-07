@@ -25,6 +25,9 @@ Policy Decision Point (PDP) としても使用されます。
 
 # コンテンツ
 
+<details>
+<summary>詳細 <b>(クリックして拡大)</b></summary>
+
 -   [アクセスの保護](#securing-access)
     -   [ID 管理の標準概念](#standard-concepts-of-identity-management)
 -   [前提条件](#prerequisites)
@@ -61,6 +64,8 @@ Policy Decision Point (PDP) としても使用されます。
     -   [基本認可 (Basic Authorization)](#basic-authorization)
         -   [基本認可 - サンプル・コード](#basic-authorization---sample-code)
     -   [PDP アクセス制御 - サンプルの実行](#pdp-access-control---running-the-example)
+
+</details>
 
 <a name="securing-access"></a>
 
