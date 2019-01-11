@@ -21,7 +21,7 @@ access the **Keyrock** REST API -
 [Postman documentation](https://fiware.github.io/tutorials.Securing-Access/) is
 also available.
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://www.getpostman.com/collections/66d8ba3abaf7319941b1)
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/66d8ba3abaf7319941b1)
 
 -   このチュートリアルは[日本語](README.ja.md)でもご覧いただけます。
 
@@ -370,7 +370,6 @@ reason to be granted access
 -   Mallory - Mallory the malicious attacker
 -   Rob - Rob the Robber
 
-
 <details>
   <summary>
    For more details <b>(Click to expand)</b>
@@ -385,7 +384,6 @@ reason to be granted access
 | manager2   | manager2@test.com         | `test`   |
 | detective1 | detective1@test.com       | `test`   |
 | detective2 | detective2@test.com       | `test`   |
-
 
 | Name    | eMail               | Password |
 | ------- | ------------------- | -------- |

@@ -21,7 +21,7 @@ Policy Decision Point (PDP) としても使用されます。
 。[Postman documentation](https://fiware.github.io/tutorials.Securing-Access/)
 も利用できます。
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://www.getpostman.com/collections/66d8ba3abaf7319941b1)
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/66d8ba3abaf7319941b1)
 
 # コンテンツ
 
