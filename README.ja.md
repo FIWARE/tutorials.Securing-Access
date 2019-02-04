@@ -6,6 +6,8 @@
 <br/>
 [![Documentation](https://img.shields.io/readthedocs/fiware-tutorials.svg)](https://fiware-tutorials.rtfd.io)
 
+<!-- prettier-ignore -->
+
 このチュートリアルでは
 、[以前のチュートリアル](https://github.com/Fiware/tutorials.Roles-Permissions)で
 作成したエンティティを使用して、FIWARE アプリケーションへのアクセスを保護します
