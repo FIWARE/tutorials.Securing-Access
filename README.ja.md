@@ -9,7 +9,7 @@
 <!-- prettier-ignore -->
 
 このチュートリアルでは
-、[以前のチュートリアル](https://github.com/Fiware/tutorials.Roles-Permissions)で
+、[以前のチュートリアル](https://github.com/FIWARE/tutorials.Roles-Permissions)で
 作成したエンティティを使用して、FIWARE アプリケーションへのアクセスを保護します
 。このチュートリアルでは、さまざまな OAuth2 グラント・フローの適切な使用方法と
 、**Keyrock** generic enabler を認可サーバ (Authorization Server) として使用し、
@@ -126,7 +126,7 @@ OAuth2 の背後にある理由は、ユーザに完全なアクセス権を与�
 アプリケーションがユーザを認証できると、アクセス制御メカニズムを使用してアクセス
 をロック・ダウンすることもできます。アクセス制御にはアクセス・ポリシーが必要です
 。つまり、誰が何をできるのかを定義する必要があります
-。[前回のチュートリアル](https://github.com/Fiware/tutorials.Roles-Permissions)で
+。[前回のチュートリアル](https://github.com/FIWARE/tutorials.Roles-Permissions)で
 はすでにロールとパーミッションを定義していましたが、簡単な Policy Decision Point
 (PDP) を追加することで、このポリシーをプログラムで施行する必要があります。PDP は
 、認可決定(authorization decisions)を評価して発行し、Policy Enforcement Point
@@ -209,9 +209,9 @@ application) のオブジェクトを保護することができます。
 # アーキテクチャ
 
 このアプリケーションは、最初
-の[セキュリティ・チュートリアル](https://github.com/Fiware/tutorials.Identity-Management/)で
+の[セキュリティ・チュートリアル](https://github.com/FIWARE/tutorials.Identity-Management/)で
 作成したデータを使用し、それをプログラムで読み込むことで
-、[以前のチュートリアル](https://github.com/Fiware/tutorials.IoT-Agent/)で作成し
+、[以前のチュートリアル](https://github.com/FIWARE/tutorials.IoT-Agent/)で作成し
 た既存の在庫管理およびセンサ・ベースのアプリケーションに OAuth2 主導のセキュリテ
 ィを追加します
 。[Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/),
@@ -224,7 +224,7 @@ _"Powered by FIWARE"_ と認定するには、Orion Context Broker を使用す�
 Orion Context Broker と IoT Agent はオープンソースの
 [MongoDB](https://www.mongodb.com/) 技術を利用して、保持している情報の永続性を保
 ちます
-。[以前のチュートリアル](https://github.com/Fiware/tutorials.IoT-Sensors/)で作成
+。[以前のチュートリアル](https://github.com/FIWARE/tutorials.IoT-Sensors/)で作成
 したダミー IoT デバイスも使用します。**Keyrock** は独自の
 [MySQL](https://www.mysql.com/) データベースを使用します。
 
@@ -261,7 +261,7 @@ Orion Context Broker と IoT Agent はオープンソースの
 -   HTTP を介して実行されている
     [UltraLight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
     プロトコルを使用す
-    る[ダミー IoT デバイス](https://github.com/Fiware/tutorials.IoT-Sensors)のセ
+    る[ダミー IoT デバイス](https://github.com/FIWARE/tutorials.IoT-Sensors)のセ
     ットとして機能する Web サーバ。特定のリソースへのアクセスが制限されています
     。
 
@@ -342,7 +342,7 @@ YAML ファイルに記述されている、他の `tutorial`コンテナの設�
 インストールを開始するには、次の手順を実行します :
 
 ```console
-git clone https://github.com/Fiware/tutorials.Securing-Access.git
+git clone https://github.com/FIWARE/tutorials.Securing-Access.git
 cd tutorials.Securing-Access
 
 ./services create
@@ -351,7 +351,7 @@ cd tutorials.Securing-Access
 > **注** Docker イメージの最初の作成には最大 3 分かかります
 
 その後、リポジトリ内で提供される
-[services](https://github.com/Fiware/tutorials.Securing-Access/blob/master/services)
+[services](https://github.com/FIWARE/tutorials.Securing-Access/blob/master/services)
 Bash スクリプトを実行することによって、コマンドラインからすべてのサービスを初期
 化することができます :
 
@@ -434,7 +434,7 @@ Alice によって 2 つの組織 (organizations) が設定されました :
 | RedirectURL   | `http://localhost:3000/login`          |
 
 時間を節約するために
-、[以前のチュートリアル](https://github.com/Fiware/tutorials.Roles-Permissions)の
+、[以前のチュートリアル](https://github.com/FIWARE/tutorials.Roles-Permissions)の
 users と organizations を作成するデータがダウンロードされ、起動時に自動的に
 MySQL データベースに保存されるため、割り当てられた UUIDs は変更されず、データを
 再度入力する必要もありません。
@@ -568,7 +568,7 @@ curl -X GET \
 ### ユーザ資格情報 - サンプル・コード
 
 このコードは、すべての OAuth2 呼び出しを別のライブラリ
-[oauth2.js](https://github.com/Fiware/tutorials.Step-by-Step/blob/master/context-provider/lib/oauth2.js)
+[oauth2.js](https://github.com/FIWARE/tutorials.Step-by-Step/blob/master/context-provider/lib/oauth2.js)
 に委譲します。すべてのリクエストには標準の OAuth2 ヘッダが含まれており、各リクエ
 ストはアプリケーションのコードを単純化するという約束でラップされています。ユーザ
 資格情報のフローは、`oa.getOAuthPasswordCredentials()` 関数を使用して呼び出され
@@ -912,7 +912,7 @@ curl -iX POST \
 ### トークンのリフレッシュ - サンプル・コード
 
 コードは、すべての OAuth2 呼び出しを別のライブラリ
-[oauth2.js](https://github.com/Fiware/tutorials.Step-by-Step/blob/master/context-provider/lib/oauth2.js)
+[oauth2.js](https://github.com/FIWARE/tutorials.Step-by-Step/blob/master/context-provider/lib/oauth2.js)
 に委譲します。すべてのリクエストには標準の OAuth2 ヘッダが含まれており、各リクエ
 ストはアプリケーションのコードを単純化するという約束でラップされています。リクエ
 スト・トークンのフローは、`oa.getOAuthRefreshToken()` 関数を使用して呼び出されま

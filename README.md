@@ -6,7 +6,7 @@
 <br/> [![Documentation](https://img.shields.io/readthedocs/fiware-tutorials.svg)](https://fiware-tutorials.rtfd.io)
 
 This tutorial secures access to a FIWARE application using the entities created in the
-[previous tutorial](https://github.com/Fiware/tutorials.Roles-Permissions). The tutorial explains appropriate use of the
+[previous tutorial](https://github.com/FIWARE/tutorials.Roles-Permissions). The tutorial explains appropriate use of the
 various OAuth2 grant flows, and how to use the **Keyrock** generic enabler as an Authorization Server to identify users.
 **Keyrock** is also used as a Policy Decision Point (PDP) to restrict access.
 
@@ -102,7 +102,7 @@ resource owner in control of who can access what.
 
 Once the application is able to authenticate users, it is also possible to lock down access using access control
 mechanisms. Access control requires having an access policy - in other words defining who can do what. We have already
-defined roles and permissions within the [previous tutorial](https://github.com/Fiware/tutorials.Roles-Permissions), and
+defined roles and permissions within the [previous tutorial](https://github.com/FIWARE/tutorials.Roles-Permissions), and
 now need to programmatically enforce this policy by adding in a simple Policy Decision Point (PDP) – which evaluates and
 issues authorization decisions, and then secure access by enforcing the decision using a Policy Enforcement Point (PEP).
 
@@ -158,8 +158,8 @@ to provide a command-line functionality similar to a Linux distribution on Windo
 # Architecture
 
 This application adds OAuth2-driven security into the existing Stock Management and Sensors-based application created in
-[previous tutorials](https://github.com/Fiware/tutorials.IoT-Agent/) by using the data created in the first
-[security tutorial](https://github.com/Fiware/tutorials.Identity-Management/) and reading it programmatically. It will
+[previous tutorials](https://github.com/FIWARE/tutorials.IoT-Agent/) by using the data created in the first
+[security tutorial](https://github.com/FIWARE/tutorials.Identity-Management/) and reading it programmatically. It will
 make use of three FIWARE components - the [Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/),the
 [IoT Agent for UltraLight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/) and integrates the use of the
 [Keyrock](https://fiware-idm.readthedocs.io/en/latest/) Generic enabler. Usage of the Orion Context Broker is sufficient
@@ -167,7 +167,7 @@ for an application to qualify as _“Powered by FIWARE”_.
 
 Both the Orion Context Broker and the IoT Agent rely on open source [MongoDB](https://www.mongodb.com/) technology to
 keep persistence of the information they hold. We will also be using the dummy IoT devices created in the
-[previous tutorial](https://github.com/Fiware/tutorials.IoT-Sensors/). **Keyrock** uses its own
+[previous tutorial](https://github.com/FIWARE/tutorials.IoT-Sensors/). **Keyrock** uses its own
 [MySQL](https://www.mysql.com/) database.
 
 Therefore the overall architecture will consist of the following elements:
@@ -194,7 +194,7 @@ Therefore the overall architecture will consist of the following elements:
     -   Shows which products can be bought at each store
     -   Allows users to "buy" products and reduce the stock count.
     -   Allows authorized users into restricted areas
--   A webserver acting as set of [dummy IoT devices](https://github.com/Fiware/tutorials.IoT-Sensors) using the
+-   A webserver acting as set of [dummy IoT devices](https://github.com/FIWARE/tutorials.IoT-Sensors) using the
     [UltraLight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
     protocol running over HTTP - access to certain resources is restricted.
 
@@ -275,7 +275,7 @@ cd tutorials.Securing-Access
 > **Note** The initial creation of Docker images can take up to three minutes
 
 Thereafter, all services can be initialized from the command-line by running the
-[services](https://github.com/Fiware/tutorials.Securing-Access/blob/master/services) Bash script provided within the
+[services](https://github.com/FIWARE/tutorials.Securing-Access/blob/master/services) Bash script provided within the
 repository:
 
 ```console
@@ -348,7 +348,7 @@ One application, with appropriate roles and permissions has also been created:
 | RedirectURL   | `http://localhost:3000/login`          |
 
 To save time, the data creating users and organizations from the
-[previous tutorial](https://github.com/Fiware/tutorials.Roles-Permissions) has been downloaded and is automatically
+[previous tutorial](https://github.com/FIWARE/tutorials.Roles-Permissions) has been downloaded and is automatically
 persisted to the MySQL database on start-up so the assigned UUIDs do not change and the data does not need to be entered
 again.
 
@@ -460,7 +460,7 @@ The username (Alice) is returned as shown:
 ### User Credentials - Sample Code
 
 The code delegates all the OAuth2 calls to a separate library
-[oauth2.js](https://github.com/Fiware/tutorials.Step-by-Step/blob/master/context-provider/lib/oauth2.js). Every request
+[oauth2.js](https://github.com/FIWARE/tutorials.Step-by-Step/blob/master/context-provider/lib/oauth2.js). Every request
 includes the standard OAuth2 header and each request is wrapped in a promise to simplify the application code. The User
 Credentials flow is invoked using the `oa.getOAuthPasswordCredentials()` function - once an `access_token` is received,
 the user details are retrieved using a separate `oa.get()` call as shown:
@@ -745,7 +745,7 @@ expiry window has been moved forward.
 ### Refresh Token - Sample Code
 
 The code delegates all the OAuth2 calls to a separate library
-[oauth2.js](https://github.com/Fiware/tutorials.Step-by-Step/blob/master/context-provider/lib/oauth2.js). Every request
+[oauth2.js](https://github.com/FIWARE/tutorials.Step-by-Step/blob/master/context-provider/lib/oauth2.js). Every request
 includes the standard OAuth2 header and each request is wrapped in a promise to simplify the application code. The
 Request Token flow is invoked using the `oa.getOAuthRefreshToken()` function - the previously received `refresh_token`
 used to receive a new `access_token` once the previous token has expired.
@@ -780,10 +780,10 @@ There are three Levels of PDP Access Control:
 -   Level 3: Advanced Authorization - Fine grained control through [XACML](https://en.wikipedia.org/wiki/XACML)
 
 **Keyrock** can be used to offer a simple Level 1 and 2 PDP on its own, and can offer level 3 combined with additional
-[generic enablers](https://github.com/Fiware/tutorials.XACML-Access-Rules). This tutorial will only be concerned with
+[generic enablers](https://github.com/FIWARE/tutorials.XACML-Access-Rules). This tutorial will only be concerned with
 the logged in site itself. Securing other services in conjunction with a
 [PEP Proxy](https://fiware-pep-proxy.readthedocs.io/en/latest) will be dealt with in a
-[later tutorial](https://github.com/Fiware/tutorials.PEP-Proxy)
+[later tutorial](https://github.com/FIWARE/tutorials.PEP-Proxy)
 
 ## Authentication Access
 
