@@ -266,7 +266,7 @@ environment, but production deployment is beyond the scope of this tutorial.
 To start the installation, do the following:
 
 ```console
-git clone git@github.com:FIWARE/tutorials.Securing-Access.git
+git clone https://github.com/FIWARE/tutorials.Securing-Access.git
 cd tutorials.Securing-Access
 
 ./services create
