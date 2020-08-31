@@ -344,6 +344,7 @@ YAML ファイルに記述されている、他の `tutorial`コンテナの設�
 ```console
 git clone https://github.com/FIWARE/tutorials.Securing-Access.git
 cd tutorials.Securing-Access
+git checkout NGSI-v2
 
 ./services create
 ```
