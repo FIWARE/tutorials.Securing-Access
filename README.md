@@ -194,7 +194,8 @@ Therefore the overall architecture will consist of the following elements:
     -   Shows which products can be bought at each store
     -   Allows users to "buy" products and reduce the stock count.
     -   Allows authorized users into restricted areas
--   A webserver acting as set of [dummy IoT devices](https://github.com/FIWARE/tutorials.IoT-Sensors/tree/NGSI-v2) using the
+-   A webserver acting as set of [dummy IoT devices](https://github.com/FIWARE/tutorials.IoT-Sensors/tree/NGSI-v2) using
+    the
     [UltraLight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
     protocol running over HTTP - access to certain resources is restricted.
 
@@ -472,11 +473,11 @@ function userCredentialGrant(req, res) {
     const password = req.body.password;
 
     oa.getOAuthPasswordCredentials(email, password)
-        .then(results => {
+        .then((results) => {
             logAccessToken(req, results.access_token);
             return getUserFromAccessToken(req, results.access_token);
         })
-        .then(user => {
+        .then((user) => {
             // Store User and return
         });
 }
@@ -484,13 +485,13 @@ function userCredentialGrant(req, res) {
 
 ```javascript
 function getUserFromAccessToken(req, accessToken) {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
         oa.get(keyrockIPAddress + "/user", accessToken)
-            .then(response => {
+            .then((response) => {
                 const user = JSON.parse(response);
                 return resolve(user);
             })
-            .catch(error => {
+            .catch((error) => {
                 req.flash("error", "User not found");
                 return reject(error);
             });
@@ -542,10 +543,10 @@ interim access code is received from **Keyrock** and second request must be made
 function authCodeGrantCallback(req, res) {
     return oa
         .getOAuthAccessToken(req.query.code)
-        .then(results => {
+        .then((results) => {
             return getUserFromAccessToken(req, results.access_token);
         })
-        .then(user => {
+        .then((user) => {
             // Store User and return
         });
 }
@@ -595,7 +596,7 @@ usable access token is received from **Keyrock**
 
 ```javascript
 function implicitGrantCallback(req, res) {
-    return getUserFromAccessToken(req, req.query.token).then(user => {
+    return getUserFromAccessToken(req, req.query.token).then((user) => {
         // Store User and return
     });
 }
@@ -662,7 +663,7 @@ The code is similar to the User Credential Grant, but without an explicit userna
 
 ```javascript
 function clientCredentialGrant(req, res) {
-    oa.getOAuthClientCredentials().then(results => {
+    oa.getOAuthClientCredentials().then((results) => {
         // Store Access token
     });
 }
@@ -753,7 +754,7 @@ used to receive a new `access_token` once the previous token has expired.
 
 ```javascript
 function refreshTokenGrant(req, res) {
-    return oa.getOAuthRefreshToken(req.session.refresh_token).then(results => {
+    return oa.getOAuthRefreshToken(req.session.refresh_token).then((results) => {
         // Store new Access Token
     });
 }
@@ -825,11 +826,11 @@ function pdpAuthentication(req, res, next) {
         keyrockIPAddress + "/user" + "?access_token=" + req.session.access_token + "&app_id=" + clientId;
     return oa
         .get(keyrockUserUrl)
-        .then(response => {
+        .then((response) => {
             res.locals.authorized = true;
             return next();
         })
-        .catch(error => {
+        .catch((error) => {
             debug(error);
             res.locals.authorized = false;
             return next();
@@ -913,12 +914,12 @@ function pdpBasicAuthorization(req, res, next, url = req.url) {
         clientId;
     return oa
         .get(keyrockUserUrl)
-        .then(response => {
+        .then((response) => {
             const user = JSON.parse(response);
             res.locals.authorized = user.authorization_decision === "Permit";
             return next();
         })
-        .catch(error => {
+        .catch((error) => {
             debug(error);
             res.locals.authorized = false;
             return next();
