@@ -414,6 +414,8 @@ curl -iX POST \
   --data "username=alice-the-admin@test.com&password=test&grant_type=password"
 ```
 
+> **Note:** the username in the grant matches the email address of the user in this instance.
+
 #### Response
 
 The response returns an `access_token` to identify the user:
