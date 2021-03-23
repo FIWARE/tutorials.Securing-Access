@@ -194,7 +194,8 @@ Therefore the overall architecture will consist of the following elements:
     -   Shows which products can be bought at each store
     -   Allows users to "buy" products and reduce the stock count.
     -   Allows authorized users into restricted areas
--   A webserver acting as set of [dummy IoT devices](https://github.com/FIWARE/tutorials.IoT-Sensors/tree/NGSI-v2) using the
+-   A webserver acting as set of [dummy IoT devices](https://github.com/FIWARE/tutorials.IoT-Sensors/tree/NGSI-v2) using
+    the
     [UltraLight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
     protocol running over HTTP - access to certain resources is restricted.
 
@@ -412,6 +413,8 @@ curl -iX POST \
   -H 'Content-Type: application/x-www-form-urlencoded' \
   --data "username=alice-the-admin@test.com&password=test&grant_type=password"
 ```
+
+> **Note:** the username in the grant matches the email address of the user in this instance.
 
 #### Response
 
