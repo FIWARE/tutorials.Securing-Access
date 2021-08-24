@@ -280,7 +280,7 @@ Orion Context Broker と IoT Agent はオープンソースの
 
 ```yaml
 : image: fiware/tutorials.context-provider
-  hostname: tutorial
+  hostname: iot-sensors
   container_name: fiware-tutorial
   networks:
       default:
