@@ -3,8 +3,7 @@
 [![FIWARE Security](https://nexus.lab.fiware.org/repository/raw/public/badges/chapters/security.svg)](https://github.com/FIWARE/catalogue/blob/master/security/README.md)
 [![License: MIT](https://img.shields.io/github/license/fiware/tutorials.Securing-Access.svg)](https://opensource.org/licenses/MIT)
 [![Support badge](https://img.shields.io/badge/tag-fiware-orange.svg?logo=stackoverflow)](https://stackoverflow.com/questions/tagged/fiware)
-<br/>
-[![Documentation](https://img.shields.io/readthedocs/fiware-tutorials.svg)](https://fiware-tutorials.rtfd.io)
+<br/> [![Documentation](https://img.shields.io/readthedocs/fiware-tutorials.svg)](https://fiware-tutorials.rtfd.io)
 
 <!-- prettier-ignore -->
 
@@ -25,7 +24,7 @@ Policy Decision Point (PDP) としても使用されます。
 
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/66d8ba3abaf7319941b1)
 
-# コンテンツ
+## コンテンツ
 
 <details>
 <summary>詳細 <b>(クリックして拡大)</b></summary>
@@ -66,6 +65,7 @@ Policy Decision Point (PDP) としても使用されます。
     -   [基本認可 (Basic Authorization)](#basic-authorization)
         -   [基本認可 - サンプル・コード](#basic-authorization---sample-code)
     -   [PDP アクセス制御 - サンプルの実行](#pdp-access-control---running-the-example)
+-   [次のステップ](#next-steps)
 
 </details>
 
@@ -279,27 +279,28 @@ Orion Context Broker と IoT Agent はオープンソースの
 ## チュートリアルのセキュリティ構成
 
 ```yaml
-: image: fiware/tutorials.context-provider
-  hostname: iot-sensors
-  container_name: fiware-tutorial
-  networks:
-      default:
-          ipv4_address: 172.18.1.7
-  expose:
-      - "3000"
-      - "3001"
-  ports:
-      - "3000:3000"
-      - "3001:3001"
-  environment:
-      - "DEBUG=tutorial:*"
-      - "WEB_APP_PORT=3000"
-      - "KEYROCK_URL=http://localhost"
-      - "KEYROCK_IP_ADDRESS=http://172.18.1.5"
-      - "KEYROCK_PORT=3005"
-      - "KEYROCK_CLIENT_ID=tutorial-dckr-site-0000-xpresswebapp"
-      - "KEYROCK_CLIENT_SECRET=tutorial-dckr-site-0000-clientsecret"
-      - "CALLBACK_URL=http://localhost:3000/login"
+tutorial:
+    image: fiware/tutorials.context-provider
+    hostname: iot-sensors
+    container_name: fiware-tutorial
+    networks:
+        default:
+            ipv4_address: 172.18.1.7
+    expose:
+        - "3000"
+        - "3001"
+    ports:
+        - "3000:3000"
+        - "3001:3001"
+    environment:
+        - "DEBUG=tutorial:*"
+        - "WEB_APP_PORT=3000"
+        - "KEYROCK_URL=http://localhost"
+        - "KEYROCK_IP_ADDRESS=http://172.18.1.5"
+        - "KEYROCK_PORT=3005"
+        - "KEYROCK_CLIENT_ID=tutorial-dckr-site-0000-xpresswebapp"
+        - "KEYROCK_CLIENT_SECRET=tutorial-dckr-site-0000-clientsecret"
+        - "CALLBACK_URL=http://localhost:3000/login"
 ```
 
 `tutorial` コンテナは、2 つのポートでリッスンしています :
@@ -582,11 +583,11 @@ function userCredentialGrant(req, res) {
     const password = req.body.password;
 
     oa.getOAuthPasswordCredentials(email, password)
-        .then(results => {
+        .then((results) => {
             logAccessToken(req, results.access_token);
             return getUserFromAccessToken(req, results.access_token);
         })
-        .then(user => {
+        .then((user) => {
             // Store User and return
         });
 }
@@ -594,13 +595,13 @@ function userCredentialGrant(req, res) {
 
 ```javascript
 function getUserFromAccessToken(req, accessToken) {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
         oa.get(keyrockIPAddress + "/user", accessToken)
-            .then(response => {
+            .then((response) => {
                 const user = JSON.parse(response);
                 return resolve(user);
             })
-            .catch(error => {
+            .catch((error) => {
                 req.flash("error", "User not found");
                 return reject(error);
             });
@@ -666,10 +667,10 @@ function authCodeGrant(req, res) {
 function authCodeGrantCallback(req, res) {
     return oa
         .getOAuthAccessToken(req.query.code)
-        .then(results => {
+        .then((results) => {
             return getUserFromAccessToken(req, results.access_token);
         })
-        .then(user => {
+        .then((user) => {
             // Store User and return
         });
 }
@@ -731,7 +732,7 @@ function implicitGrant(req, res) {
 
 ```javascript
 function implicitGrantCallback(req, res) {
-    return getUserFromAccessToken(req, req.query.token).then(user => {
+    return getUserFromAccessToken(req, req.query.token).then((user) => {
         // Store User and return
     });
 }
@@ -812,7 +813,7 @@ curl -iX POST \
 
 ```javascript
 function clientCredentialGrant(req, res) {
-    oa.getOAuthClientCredentials().then(results => {
+    oa.getOAuthClientCredentials().then((results) => {
         // Store Access token
     });
 }
@@ -922,7 +923,7 @@ curl -iX POST \
 
 ```javascript
 function refreshTokenGrant(req, res) {
-    return oa.getOAuthRefreshToken(req.session.refresh_token).then(results => {
+    return oa.getOAuthRefreshToken(req.session.refresh_token).then((results) => {
         // Store new Access Token
     });
 }
@@ -1007,19 +1008,14 @@ function pdpAuthentication(req, res, next) {
 ```javascript
 function pdpAuthentication(req, res, next) {
     const keyrockUserUrl =
-        keyrockIPAddress +
-        "/user" +
-        "?access_token=" +
-        req.session.access_token +
-        "&app_id=" +
-        clientId;
+        keyrockIPAddress + "/user" + "?access_token=" + req.session.access_token + "&app_id=" + clientId;
     return oa
         .get(keyrockUserUrl)
-        .then(response => {
+        .then((response) => {
             res.locals.authorized = true;
             return next();
         })
-        .catch(error => {
+        .catch((error) => {
             debug(error);
             res.locals.authorized = false;
             return next();
@@ -1112,12 +1108,12 @@ function pdpBasicAuthorization(req, res, next, url = req.url) {
         clientId;
     return oa
         .get(keyrockUserUrl)
-        .then(response => {
+        .then((response) => {
             const user = JSON.parse(response);
             res.locals.authorized = user.authorization_decision === "Permit";
             return next();
         })
-        .catch(error => {
+        .catch((error) => {
             debug(error);
             res.locals.authorized = false;
             return next();
@@ -1261,8 +1257,17 @@ Charlie には **security** のロールがあります
     -   ベルを鳴らします - アクセスが**許可**されます - これは security ユーザに
         許可されます
 
+<a name="next-steps"></a>
+
+# 次のステップ
+
+高度な機能を追加することで、アプリケーションに複雑さを加える方法を知りたいですか
+？このシリーズ
+の[他のチュートリアル](https://www.letsfiware.jp/fiware-tutorials)を読むことで見
+つけることができます。
+
 ---
 
 ## License
 
-[MIT](LICENSE) © 2018-2020 FIWARE Foundation e.V.
+[MIT](LICENSE) © 2018-2022 FIWARE Foundation e.V.
