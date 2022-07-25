@@ -23,6 +23,7 @@ Policy Decision Point (PDP) としても使用されます。
 も利用できます。
 
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/66d8ba3abaf7319941b1)
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/FIWARE/tutorials.Securing-Access/tree/NGSI-v2)
 
 ## コンテンツ
 
