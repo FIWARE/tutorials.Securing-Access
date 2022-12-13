@@ -542,8 +542,10 @@ curl -iX POST \
 #### :two: リクエスト
 
 ```console
-curl -X GET \
-  'http://localhost:3005/user?access_token=a7e22dfe2bd7d883c8621b9eb50797a7f126eeab'
+curl -G -X GET \
+  'http://localhost:3005/user?' \
+  -d 'access_token=a7e22dfe2bd7d883c8621b9eb50797a7f126eeab' \
+  -d 'tutorial-dckr-site-0000-xpresswebapp'
 ```
 
 #### レスポンス
