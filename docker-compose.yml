@@ -168,7 +168,7 @@ services:
     networks:
       - default
     volumes:
-      - mongo-db:/data
+      - mongo-db:/data/db
     healthcheck:
       test: |
         host=`hostname --ip-address || echo '127.0.0.1'`; 
