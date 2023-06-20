@@ -381,6 +381,20 @@ echo tutorial-dckr-site-0000-xpresswebapp:tutorial-dckr-site-0000-clientsecret |
 ```
 dHV0b3JpYWwtZGNrci1zaXRlLTAwMDAteHByZXNzd2ViYXBwOnR1dG9yaWFsLWRja3Itc2l0ZS0wMDAwLWNsaWVudHNlY3JldAo=
 ```
+> **Warning**
+> linux may generate the 2nd last char as 'o', which should be an '=' so replace it. or use the following Python script
+>
+```authorizationHeader.py
+import base64
+
+client_id = "tutorial-dckr-site-0000-xpresswebapp"
+client_secret = "tutorial-dckr-site-0000-clientsecret"
+
+concatenated_string = f"{client_id}:{client_secret}"
+base64_auth_code = base64.b64encode(concatenated_string.encode()).decode()
+
+print("Base64-encoded authentication code:", base64_auth_code)
+```
 
 All four major grant flows can be demonstrated within the tutorial application, the actual flow to pick will depend on
 your own use case.
