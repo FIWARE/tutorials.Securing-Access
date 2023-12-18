@@ -502,7 +502,7 @@ dHV0b3JpYWwtZGNrci1zaXRlLTAwMDAteHByZXNzd2ViYXBwOnR1dG9yaWFsLWRja3Itc2l0ZS0wMDAw
 
 ### パスワードによるログイン
 
-#### :one: リクエスト
+#### 1️⃣ リクエスト
 
 ユーザ資格情報フローを使用してログインするには、POST リクエストを
 `grant_type=password` を指定して、`oauth2/token` エンドポイントに送信します。
@@ -537,7 +537,7 @@ curl -iX POST \
 リクエストと共に使用することができます。例えば、上記のレスポンスから
 `access_token` を取得します。
 
-#### :two: リクエスト
+#### 2️⃣ リクエスト
 
 ```console
 curl -G -X GET \
@@ -782,7 +782,7 @@ function implicitGrantCallback(req, res) {
 、`grant_type=client_credentials` を指定して、`oauth2/token` エンドポイントに送
 信します。
 
-#### :three: リクエスト
+#### 3️⃣ リクエスト
 
 ```console
 curl -iX POST \
@@ -851,7 +851,7 @@ function clientCredentialGrant(req, res) {
 ローを使用してログインする場合は、`grant_type=password` を使って POST リクエスト
 を `oauth2/token` エンドポイントに送ります。
 
-#### :four: Request
+#### 4️⃣ Request
 
 ```console
 curl -iX POST \
@@ -885,7 +885,7 @@ curl -iX POST \
 えば、前回の有効期限が過ぎると)、`refresh_token` が OAuth2 リフレッシュ・トーク
 ンのフローと `grant_type=refresh_token` で使われます。
 
-#### :five: リクエスト
+#### 5️⃣ リクエスト
 
 ```console
 curl -iX POST \
@@ -980,7 +980,7 @@ PDP アクセス制御には 3 つのレベルがあります :
 ユーザが **Keyrock** を使用して認証した場合、`/user` エンドポイントに GET リクエ
 ストを行うことでアクセス・トークンの最新性を確認できます。
 
-#### :six: リクエスト
+#### 6️⃣ リクエスト
 
 ```console
  curl -X GET \
@@ -1041,7 +1041,7 @@ function pdpAuthentication(req, res, next) {
 `action` に基づいています。`/user` GET リクエストにパラメータを追加することで、
 アクセス・パーミッションを含む拡張されたユーザの詳細を取得できます。
 
-#### :seven: リクエスト
+#### 7️⃣  リクエスト
 
 ```console
  curl -X GET \

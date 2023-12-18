@@ -285,7 +285,8 @@ repository:
 ./services start
 ```
 
-> :information_source: **Note:** If you want to clean up and start over again you can do so with the following command:
+> [!NOTE]
+> If you want to clean up and start over again you can do so with the following command:
 >
 > ```console
 > ./services stop
@@ -399,7 +400,7 @@ diagram, the user must type their own password into the web-app client itself
 
 ### Logging-in with a Password
 
-#### :one: Request
+#### 1️⃣ Request
 
 To log in using the user-credentials flow send a POST request to the `oauth2/token` endpoint with the
 `grant_type=password`
@@ -433,7 +434,7 @@ The response returns an `access_token` to identify the user:
 The access code can then be used with a GET request to the `/user` endpoint to obtain user details, for example, taking
 the `access_token` from the response above
 
-#### :two: Request
+#### 2️⃣ Request
 
 ```console
 curl -G -X GET \
@@ -637,7 +638,7 @@ been included for completeness.
 To log in using the client credentials flow send a POST request to the `oauth2/token` endpoint with the
 `grant_type=client_credentials`
 
-#### :three: Request:
+#### 3️⃣ Request:
 
 ```console
 curl -iX POST \
@@ -689,7 +690,7 @@ appropriate for all grant types.
 
 ### Availability Check
 
-#### :four: Request
+#### 4️⃣ Request
 
 Check to see if Refresh Token flow is available, merely log in using one of the other grant types, for example to log in
 using the user-credentials flow send a POST request to the `oauth2/token` endpoint with the `grant_type=password`
@@ -722,7 +723,7 @@ The `refresh_token=05e386edd9f95ed0e599c5004db8573e86dff874` from the response a
 a new `access_token` (for example once the previous one has expired) the `refresh_token` is used in the OAuth2 refresh
 token flow and a `grant_type=refresh_token`
 
-#### :five: Request
+#### 5️⃣ Request
 
 ```console
 curl -iX POST \
@@ -800,7 +801,7 @@ Level 1 PDP can be used in conjunction with any OAuth2 provider using any flow.
 If a user has authenticated using **Keyrock**, the freshness of the access token can be checked by making a GET request
 to the `/user` endpoint.
 
-#### :six: Request
+#### 6️⃣ Request
 
 ```console
  curl -X GET \
@@ -854,7 +855,7 @@ As a reminder, **Keyrock** permissions are based on `resource` (e.g. URL) and `a
 verb). We can retrieve extended user details including access permissions by adding additional parameters to a `/user`
 GET request
 
-#### :seven: Request
+#### 7️⃣  Request
 
 ```console
  curl -X GET \
