@@ -275,7 +275,8 @@ git checkout NGSI-v2
 ./services create
 ```
 
-> **Note** The initial creation of Docker images can take up to three minutes
+> [!NOTE]
+>  The initial creation of Docker images can take up to three minutes
 
 Thereafter, all services can be initialized from the command-line by running the
 [services](https://github.com/FIWARE/tutorials.Securing-Access/blob/NGSI-v2/services) Bash script provided within the
@@ -414,7 +415,8 @@ curl -iX POST \
   --data "username=alice-the-admin@test.com&password=test&grant_type=password"
 ```
 
-> **Note:** the username in the grant matches the email address of the user in this instance.
+> [!NOTE]
+>  The username in the grant matches the email address of the user in this instance.
 
 #### Response
 
@@ -571,7 +573,8 @@ The user must then authorize the request
 
 The response displays the user on the top right of the screen, details of the token are also flashed onto the screen.
 
-> **Note** Unless you deliberately log out of **Keyrock** > `http://localhost:3005`, the existing **Keyrock** session
+> [!NOTE]
+>  Unless you deliberately log out of **Keyrock** > `http://localhost:3005`, the existing **Keyrock** session
 > which has already permitted access will be used for subsequent authorization requests, so the **Keyrock** login screen
 > will not be shown again.
 
@@ -621,7 +624,8 @@ The user must then authorize the request
 
 The response displays the user on the top right of the screen, details of the token are also flashed onto the screen.
 
-> **Note** Unless you deliberately log out of **Keyrock** > `http://localhost:3005`, the existing **Keyrock** session
+> [!NOTE]
+> Unless you deliberately log out of **Keyrock** > `http://localhost:3005`, the existing **Keyrock** session
 > which has already permitted access will be used for subsequent authorization request.
 
 ## Client Credentials Grant
@@ -959,7 +963,8 @@ function sendCommand(req, res) {
 
 ## PDP Access Control - Running the Example
 
-> **Note** Only four resources have been secured at level 2:
+> [!NOTE]
+> Only four resources have been secured at level 2:
 >
 > -   sending the unlock door command
 > -   sending the ring bell command
@@ -988,7 +993,8 @@ function sendCommand(req, res) {
 
 Eve has an account, but no roles in the application.
 
-> **Note** As Eve has a recognized account, she gains full authentication access, even though her account has no roles
+> [!NOTE]
+> As Eve has a recognized account, she gains full authentication access, even though her account has no roles
 > attached.
 
 -   From `http://localhost:3000`, log in as `eve@example.com` with the password `test`
