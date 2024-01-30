@@ -18,8 +18,8 @@
 #
 version: "3.8"
 services:
-  # Orion is the context broker
-  orion:
+  # Orion is an NGSI-v2 context broker
+  orion-v2:
     labels:
       org.fiware: 'tutorial'
     image: quay.io/fiware/orion:${ORION_VERSION}
@@ -112,7 +112,7 @@ services:
     hostname: iot-sensors
     container_name: fiware-tutorial
     depends_on:
-      orion:
+      orion-v2:
         condition: service_started
       iot-agent:
         condition: service_started
