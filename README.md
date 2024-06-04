@@ -281,7 +281,8 @@ git checkout NGSI-v2
 ```
 
 > [!NOTE]
->  The initial creation of Docker images can take up to three minutes
+>
+> The initial creation of Docker images can take up to three minutes
 
 Thereafter, all services can be initialized from the command-line by running the
 [services](https://github.com/FIWARE/tutorials.Securing-Access/blob/NGSI-v2/services) Bash script provided within the
@@ -292,6 +293,7 @@ repository:
 ```
 
 > [!NOTE]
+>
 > If you want to clean up and start over again you can do so with the following command:
 >
 > ```console
@@ -421,7 +423,8 @@ curl -iX POST \
 ```
 
 > [!NOTE]
->  The username in the grant matches the email address of the user in this instance.
+>
+> The username in the grant matches the email address of the user in this instance.
 
 #### Response
 
@@ -579,9 +582,10 @@ The user must then authorize the request
 The response displays the user on the top right of the screen, details of the token are also flashed onto the screen.
 
 > [!NOTE]
->  Unless you deliberately log out of **Keyrock** > `http://localhost:3005`, the existing **Keyrock** session
-> which has already permitted access will be used for subsequent authorization requests, so the **Keyrock** login screen
-> will not be shown again.
+>
+> Unless you deliberately log out of **Keyrock** > `http://localhost:3005`, the existing **Keyrock** session which has
+> already permitted access will be used for subsequent authorization requests, so the **Keyrock** login screen will not
+> be shown again.
 
 ## Implicit Grant
 
@@ -630,8 +634,9 @@ The user must then authorize the request
 The response displays the user on the top right of the screen, details of the token are also flashed onto the screen.
 
 > [!NOTE]
-> Unless you deliberately log out of **Keyrock** > `http://localhost:3005`, the existing **Keyrock** session
-> which has already permitted access will be used for subsequent authorization request.
+>
+> Unless you deliberately log out of **Keyrock** > `http://localhost:3005`, the existing **Keyrock** session which has
+> already permitted access will be used for subsequent authorization request.
 
 ## Client Credentials Grant
 
@@ -864,7 +869,7 @@ As a reminder, **Keyrock** permissions are based on `resource` (e.g. URL) and `a
 verb). We can retrieve extended user details including access permissions by adding additional parameters to a `/user`
 GET request
 
-#### 7️⃣  Request
+#### 7️⃣ Request
 
 ```console
  curl -X GET \
@@ -969,6 +974,7 @@ function sendCommand(req, res) {
 ## PDP Access Control - Running the Example
 
 > [!NOTE]
+>
 > Only four resources have been secured at level 2:
 >
 > -   sending the unlock door command
@@ -999,8 +1005,8 @@ function sendCommand(req, res) {
 Eve has an account, but no roles in the application.
 
 > [!NOTE]
-> As Eve has a recognized account, she gains full authentication access, even though her account has no roles
-> attached.
+>
+> As Eve has a recognized account, she gains full authentication access, even though her account has no roles attached.
 
 -   From `http://localhost:3000`, log in as `eve@example.com` with the password `test`
 
