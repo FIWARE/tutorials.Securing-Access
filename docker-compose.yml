@@ -16,7 +16,6 @@
 # 
 # see: https://github.com/FIWARE/helm-charts/
 #
-version: "3.8"
 services:
   # Orion is an NGSI-v2 context broker
   orion-v2:
@@ -170,7 +169,7 @@ services:
     volumes:
       - mongo-db:/data
     healthcheck:
-      test: ["CMD","mongosh", "--eval", "db.adminCommand('ping')"]
+      test: ["CMD","mongosh", "localhost:27017/test", "--quiet"]
       interval: 5s
       timeout: 5s
       retries: 3
