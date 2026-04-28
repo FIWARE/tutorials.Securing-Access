@@ -214,7 +214,7 @@ application) のオブジェクトを保護することができます。
 た既存の在庫管理およびセンサ・ベースのアプリケーションに OAuth2 主導のセキュリテ
 ィを追加します
 。[Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/),
-[IoT Agent for UltraLight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/)
+[IoT Agent for JSON](https://fiware-iotagent-json.readthedocs.io/en/latest/)
 と[Keyrock](https://fiware-idm.readthedocs.io/en/latest/) Generic enabler の 3
 つの FIWARE コンポーネントを使用し、これらを統合します。アプリケーションを
 _"Powered by FIWARE"_ と認定するには、Orion Context Broker を使用するだけで十分
@@ -233,10 +233,10 @@ Orion Context Broker と IoT Agent はオープンソースの
     [Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/) は
     、[NGSI-v2](https://fiware.github.io/specifications/OpenAPI/ngsiv2) を使用して
     リクエストを受信します
--   [IoT Agent for UltraLight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/)
+-   [IoT Agent for JSON](https://fiware-iotagent-json.readthedocs.io/en/latest/)
     は、[NGSI-v2](https://fiware.github.io/specifications/OpenAPI/ngsiv2) を使用し
     てサウスバウンド・リクエストを受信し、それをデバイスのため
-    に[UltraLight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
+    に[JSON](https://fiware-iotagent-json.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
     に変換します。
 -   FIWARE [Keyrock](https://fiware-idm.readthedocs.io/en/latest/) は、以下を含
     んだ、補完的な ID 管理システムを提供します :
@@ -258,7 +258,7 @@ Orion Context Broker と IoT Agent はオープンソースの
     -   ユーザが製品を"購入"して在庫数を減らすことができます
     -   許可されたユーザを制限されたエリアに入れることができます
 -   HTTP を介して実行されている
-    [UltraLight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
+    [JSON](https://fiware-iotagent-json.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
     プロトコルを使用す
     る[ダミー IoT デバイス](https://github.com/FIWARE/tutorials.IoT-Sensors/tree/NGSI-v2)のセ
     ットとして機能する Web サーバ。特定のリソースへのアクセスが制限されています
@@ -307,7 +307,7 @@ tutorial:
 -   ポート `3000` が公開されているので、ダミー IoT デバイスを表示する Web ページ
     が表示されます
 -   ポート `3001` は純粋にチュートリアルアクセスのために公開されているため、cUrl
-    または Postman は同じネットワークの一部ではなくても、UltraLight コマンドを作
+    または Postman は同じネットワークの一部ではなくても、JSON コマンドを作
     成できます
 
 `tutorial` コンテナは、次に示すように環境変数によってドライブされます :

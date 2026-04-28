@@ -170,7 +170,7 @@ This application adds OAuth2-driven security into the existing Stock Management 
 [previous tutorials](https://github.com/FIWARE/tutorials.IoT-Agent/) by using the data created in the first
 [security tutorial](https://github.com/FIWARE/tutorials.Identity-Management/) and reading it programmatically. It will
 make use of three FIWARE components - the [Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/),the
-[IoT Agent for UltraLight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/) and integrates the use of the
+[IoT Agent for JSON](https://fiware-iotagent-json.readthedocs.io/en/latest/) and integrates the use of the
 [Keyrock](https://fiware-idm.readthedocs.io/en/latest/) Generic enabler. Usage of the Orion Context Broker is sufficient
 for an application to qualify as _“Powered by FIWARE”_.
 
@@ -183,10 +183,10 @@ Therefore the overall architecture will consist of the following elements:
 
 -   The FIWARE [Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/) which will receive requests using
     [NGSI-v2](https://fiware.github.io/specifications/OpenAPI/ngsiv2)
--   The FIWARE [IoT Agent for UltraLight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/) which will receive
+-   The FIWARE [IoT Agent for JSON](https://fiware-iotagent-json.readthedocs.io/en/latest/) which will receive
     southbound requests using [NGSI-v2](https://fiware.github.io/specifications/OpenAPI/ngsiv2) and convert them to
-    [UltraLight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
-    commands for the devices
+    [JSON](https://fiware-iotagent-json.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual) commands
+    for the devices
 -   FIWARE [Keyrock](https://fiware-idm.readthedocs.io/en/latest/) offer a complement Identity Management System
     including:
     -   An OAuth2 authentication system for Applications and Users
@@ -204,8 +204,7 @@ Therefore the overall architecture will consist of the following elements:
     -   Allows users to "buy" products and reduce the stock count.
     -   Allows authorized users into restricted areas
 -   A webserver acting as set of [dummy IoT devices](https://github.com/FIWARE/tutorials.IoT-Sensors/tree/NGSI-v2) using
-    the
-    [UltraLight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
+    the [JSON](https://fiware-iotagent-json.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
     protocol running over HTTP - access to certain resources is restricted.
 
 Since all interactions between the elements are initiated by HTTP requests, the entities can be containerized and run
@@ -246,8 +245,8 @@ tutorial:
 The `tutorial` container is listening on two ports:
 
 -   Port `3000` is exposed so we can see the web page displaying the Dummy IoT devices.
--   Port `3001` is exposed purely for tutorial access - so that cUrl or Postman can make UltraLight commands without
-    being part of the same network.
+-   Port `3001` is exposed purely for tutorial access - so that cUrl or Postman can make JSON commands without being
+    part of the same network.
 
 The `tutorial` container is driven by environment variables as shown:
 
