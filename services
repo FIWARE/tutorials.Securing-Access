@@ -1,170 +1,165 @@
 #!/bin/bash
 #
-#  Command Line Interface to start all services associated with the Getting-Started Tutorial
+#  Command Line Interface to start all services associated with the Tutorial
 #
-#  For this tutorial the commands are merely a convenience script to run docker-compose
+#  For this tutorial the commands are merely a convenience script to run docker or docker-compose
 #
+#  Each services script can be run using either docker-compose (the external tool with the hyphen -)
+#  or docker compose (the newer version directly bundled with Docker with a space)
+#
+#  if you start up with the following command:
+#
+#  ./services start legacy
+#
+# This will force the script to use docker-compose which may be more reliable in
+# some cases (or if an older version of Docker is being used)
 
 set -e
 
-if (( $# != 1 )); then
+dockerCmd="docker compose"
+if (( $# == 2 )); then
+    dockerCmd="docker-compose"
+fi
+
+if (( $# < 1 )); then
     echo "Illegal number of parameters"
     echo "usage: services [create|start|stop]"
     exit 1
 fi
 
-loadData () {
-	export CONTEXT_BROKER="$1" 
-	docker run --rm -v $(pwd)/import-data:/import-data \
-		--network fiware_default \
-		-e CONTEXT_BROKER=${CONTEXT_BROKER} \
-		-e TUTORIAL_DATA_MODELS_CONTEXT="http://context-provider:3000/data-models/ngsi-context.jsonld" \
-		--entrypoint /bin/ash curlimages/curl import-data
-	waitForIoTAgent
-	docker run --rm -v $(pwd)/provision-devices:/provision-devices \
-		--network fiware_default \
-		-e CONTEXT_BROKER=${CONTEXT_BROKER} \
-		-e TUTORIAL_DATA_MODELS_CONTEXT="http://context-provider:3000/data-models/ngsi-context.jsonld" \
-		--entrypoint /bin/ash curlimages/curl provision-devices
-	echo ""
-}
-
-waitForContext () {
-	echo -e "\n⏳ Waiting for \033[1m@context\033[0m to be available\n"
-	while [ `docker run --network fiware_default --rm curlimages/curl -s -o /dev/null -w %{http_code} 'http://context-provider:3000/data-models/ngsi-context.jsonld'` -eq 000 ]
-	do 
-	  echo -e "@context HTTP state: " `curl -s -o /dev/null -w %{http_code} 'http://context-provider:3000/data-models/ngsi-context.jsonld'` " (waiting for 200)"
-	  sleep 1
-	done
-}
-
-waitForKeyrock () {
-	echo -e "⏳ Waiting for \033[1;31mKeyrock\033[0m to be available\n"
-	
-	while ! [ `docker inspect --format='{{.State.Health.Status}}' fiware-keyrock` == "healthy" ]
-	do 
-		echo -e "Keyrock HTTP state: " `curl -s -o /dev/null -w %{http_code} 'http://localhost:3005/version'` " (waiting for 200)"
-		sleep 5
-	done
-	echo -e " \033[1;32mdone\033[0m"
-}
-
-waitForMongo () {
-	echo -e "\n⏳ Waiting for \033[1mMongoDB\033[0m to be available\n"
-	while ! [ `docker inspect --format='{{.State.Health.Status}}' db-mongo` == "healthy" ]
-	do 
-		sleep 1
-	done
-}
-
-waitForOrion () {
-	echo -e "\n⏳ Waiting for \033[1;34mOrion\033[0m to be available\n"
-
-	while ! [ `docker inspect --format='{{.State.Health.Status}}' fiware-orion` == "healthy" ]
-	do
-	  echo -e "Context Broker HTTP state: " `curl -s -o /dev/null -w %{http_code} 'http://localhost:1026/version'` " (waiting for 200)"
-	  sleep 1
-	done
-}
-
-waitForIoTAgent () {
-	echo -e "\n⏳ Waiting for \033[1;36mIoT-Agent\033[0m to be available\n"
-	while ! [ `docker inspect --format='{{.State.Health.Status}}' fiware-iot-agent` == "healthy" ]
-
-	do 
-	  echo -e "IoT Agent HTTP state: " `curl -s -o /dev/null -w %{http_code} 'http://localhost:4041/version'` " (waiting for 200)"
-	  sleep 1
-	done
-}
-
 displayServices () {
-	echo ""
-	docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" --filter name=fiware-*
-	echo ""
-}
-
-addDatabaseIndex () {
-	printf "Adding appropriate \033[1mMongoDB\033[0m indexes for \033[1;34mOrion\033[0m  ..."
-	docker exec  db-mongo mongo --eval '
-	conn = new Mongo();db.createCollection("orion");
-	db = conn.getDB("orion");
-	db.createCollection("entities");
-	db.entities.createIndex({"_id.servicePath": 1, "_id.id": 1, "_id.type": 1}, {unique: true});
-	db.entities.createIndex({"_id.type": 1}); 
-	db.entities.createIndex({"_id.id": 1});' > /dev/null
-
-	docker exec  db-mongo mongo --eval '
-	conn = new Mongo();db.createCollection("orion-openiot");
-	db = conn.getDB("orion-openiot");
-	db.createCollection("entities");
-	db.entities.createIndex({"_id.servicePath": 1, "_id.id": 1, "_id.type": 1}, {unique: true});
-	db.entities.createIndex({"_id.type": 1}); 
-	db.entities.createIndex({"_id.id": 1});' > /dev/null
-	echo -e " \033[1;32mdone\033[0m"
-
-	printf "Adding appropriate \033[1mMongoDB\033[0m indexes for \033[1;36mIoT-Agent\033[0m  ..."
-	docker exec  db-mongo mongo --eval '
-	conn = new Mongo();
-	db = conn.getDB("iotagentul");
-	db.createCollection("devices");
-	db.devices.createIndex({"_id.service": 1, "_id.id": 1, "_id.type": 1});
-	db.devices.createIndex({"_id.type": 1}); 
-	db.devices.createIndex({"_id.id": 1});
-	db.createCollection("groups");
-	db.groups.createIndex({"_id.resource": 1, "_id.apikey": 1, "_id.service": 1});
-	db.groups.createIndex({"_id.type": 1});' > /dev/null
-	echo -e " \033[1;32mdone\033[0m"
-}
-
-startContainers () {
-	echo ""
-	export IDM_HTTPS_ENABLED="$1" 
-	docker-compose --log-level ERROR -p fiware up -d --remove-orphans
-	echo ""
+    echo ""
+    docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" --filter name="$1"
+    echo ""
 }
 
 stoppingContainers () {
-	echo "Stopping containers"
-	docker-compose --log-level ERROR  -p fiware down -v --remove-orphans
+    CONTAINERS=$(docker ps --filter "label=org.fiware=tutorial" -aq)
+    if [[ -n $CONTAINERS ]]; then
+        echo "Stopping containers"
+        docker rm -f $CONTAINERS || true
+    fi
+    VOLUMES=$(docker volume ls -qf dangling=true)
+    if [[ -n $VOLUMES ]]; then
+        echo "Removing old volumes"
+        docker volume rm $VOLUMES || true
+    fi
+    NETWORKS=$(docker network ls --filter "label=org.fiware=tutorial" -q)
+    if [[ -n $NETWORKS ]]; then
+        echo "Removing tutorial networks"
+        docker network rm $NETWORKS || true
+    fi
+}
+
+waitForKeycloak () {
+    echo -e "\n⏳ Waiting for \033[1;34mKeycloak\033[0m to be available\n"
+    while ! [ "$(docker inspect --format='{{.State.Health.Status}}' fiware-keycloak 2>/dev/null)" == "healthy" ]
+    do
+        echo -e "Keycloak health: $(docker inspect --format='{{.State.Health.Status}}' fiware-keycloak 2>/dev/null) (waiting for healthy)"
+        sleep 5
+    done
+    echo -e " \033[1;32mdone\033[0m"
+}
+
+waitForOrion () {
+    echo -e "\n⏳ Waiting for \033[1;34mOrion-LD\033[0m to be available\n"
+    while ! [ "$(docker inspect --format='{{.State.Health.Status}}' fiware-orion 2>/dev/null)" == "healthy" ]
+    do
+        echo -e "Orion health: $(docker inspect --format='{{.State.Health.Status}}' fiware-orion 2>/dev/null) (waiting for healthy)"
+        sleep 5
+    done
+    echo -e " \033[1;32mdone\033[0m"
+}
+
+waitForTutorial () {
+    echo -e "\n⏳ Waiting for \033[1mTutorial\033[0m to be available\n"
+    while ! [ "$(docker inspect --format='{{.State.Health.Status}}' fiware-tutorial 2>/dev/null)" == "healthy" ]
+    do
+        echo -e "Tutorial health: $(docker inspect --format='{{.State.Health.Status}}' fiware-tutorial 2>/dev/null) (waiting for healthy)"
+        sleep 5
+    done
+    echo -e " \033[1;32mdone\033[0m"
+}
+
+waitForIoTAgent () {
+    echo -e "\n⏳ Waiting for \033[1;36mIoT-Agent\033[0m to be available\n"
+    while [ "$(docker run --network fiware_default --rm "quay.io/curl/curl:${CURL_VERSION}" -s -o /dev/null -w '%{http_code}' 'http://iot-agent:4041/version')" -eq 000 ]
+    do
+        echo -e "IoT Agent HTTP state: 000 (waiting for 200)"
+        sleep 6
+    done
+    echo -e " \033[1;32mdone\033[0m"
+}
+
+loadData () {
+    docker run --rm \
+        --network fiware_default \
+        -v "$(pwd)/import-data:/import-data" \
+        -v "$(pwd)/data:/home/curl_user/data" \
+        -e CONTEXT_BROKER=orion:1026 \
+        -e IOT_DEVICES=http://iot-sensors:3001 \
+        -e TUTORIAL_DATA_MODELS_CONTEXT=http://context/ngsi-context.jsonld \
+        --entrypoint /bin/ash \
+        "quay.io/curl/curl:${CURL_VERSION}" /import-data
+    waitForIoTAgent
+    docker run --rm \
+        --network fiware_default \
+        -v "$(pwd)/provision-devices:/provision-devices" \
+        --entrypoint /bin/ash \
+        "quay.io/curl/curl:${CURL_VERSION}" /provision-devices
+    docker run --rm \
+        --network fiware_default \
+        -v "$(pwd)/link-devices:/link-devices" \
+        --entrypoint /bin/ash \
+        "quay.io/curl/curl:${CURL_VERSION}" /link-devices
+}
+
+loadUsers () {
+    docker run --rm \
+        --network fiware_default \
+        -v "$(pwd)/import_users:/import_users" \
+        -e KEYCLOAK_HOST=keycloak \
+        -e KEYCLOAK_PORT=8080 \
+        --entrypoint /bin/sh \
+        python:3-alpine -c "apk add --no-cache curl && /import_users"
 }
 
 command="$1"
 case "${command}" in
-	"help")
+    "help")
         echo "usage: services [create|start|stop]"
         ;;
-	"start")
-		export $(cat .env | grep "#" -v)
-		stoppingContainers
-		echo -e "Starting six containers \033[1;34mOrion\033[0m, \033[1;36mIoT-Agent\033[0m,\033[1;31mKeyrock\033[0m, \033[1mTutorial\033[0m and \033[1mMongoDB\033[0m and \033[1mMySQL\033[0m databases."
-		echo -e "- \033[1;34mOrion\033[0m is the context broker"
-		echo -e "- \033[1;36mIoT-Agent\033[0m is configured for the UltraLight Protocol"
-		echo -e "- \033[1mTutorial\033[0m acts as a series of dummy IoT Sensors over HTTP"
-		echo -e "- \033[1;31mKeyrock\033[0m is an Identity Management Front-End"
-		startContainers false
-		waitForMongo
-		addDatabaseIndex
-		waitForOrion 
-		loadData orion:1026
-		waitForKeyrock
-		displayServices
-		echo -e "Now open \033[4mhttp://localhost:3000\033[0m"
-		;;
-	"stop")
-		export $(cat .env | grep "#" -v)
-		stoppingContainers
-		;;
-	"create")
-		export $(cat .env | grep "#" -v)
-		echo "Pulling Docker images"
-		docker-compose --log-level ERROR -p fiware pull
-		;;
-	*)
-		echo "Command not Found."
-		echo "usage: services [create|start|stop]"
-		exit 127;
-		;;
+    "start")
+        export $(cat .env | grep "#" -v)
+        stoppingContainers
+        echo -e "Starting containers: \033[1;34mKeycloak\033[0m, \033[1;34mOrion-LD\033[0m, a \033[1mTutorial\033[0m application, a \033[1mContext\033[0m server, \033[1mPostgreSQL\033[0m and \033[1mMongoDB\033[0m databases."
+        echo -e "- \033[1;34mKeycloak\033[0m is the Identity and Access Management server"
+        echo -e "- \033[1;34mOrion-LD\033[0m is the NGSI-LD context broker"
+        echo -e "- \033[1mTutorial\033[0m is the farm management web application"
+        echo ""
+        ${dockerCmd} up -d --remove-orphans
+        displayServices fiware
+        waitForKeycloak
+        loadUsers
+        waitForOrion
+        waitForTutorial
+        loadData
+        echo -e "\033[1;34mKeycloak\033[0m is now running and exposed on localhost:${KEYCLOAK_PORT}"
+        echo -e "Now open \033[4mhttp://localhost:${TUTORIAL_APP_PORT}\033[0m"
+        ;;
+    "stop")
+        export $(cat .env | grep "#" -v)
+        stoppingContainers
+        ;;
+    "create")
+        export $(cat .env | grep "#" -v)
+        echo "Pulling Docker images"
+        docker pull -q "quay.io/curl/curl:${CURL_VERSION}"
+        ${dockerCmd} pull --ignore-pull-failures
+        ;;
+    *)
+        echo "Command not Found."
+        echo "usage: services [create|start|stop]"
+        exit 127;
+        ;;
 esac
-
-
-
