@@ -32,7 +32,6 @@ git checkout NGSI-v2
 | --- | --- | --- | ---
 
 
-<!--
 ## NGSI-LD Smart Farm
 
 **NGSI-LD** offers JSON-LD based interoperability used for Federations and Data Spaces. To run this tutorial with **NGSI-LD**, use the `NGSI-LD` branch.
@@ -49,7 +48,6 @@ git checkout NGSI-LD
 | [![NGSI LD](https://img.shields.io/badge/NGSI-LD-d6604d.svg)](https://cim.etsi.org/NGSI-LD/official/front-page.html) | :books: [Documentation](https://github.com/FIWARE/tutorials.Securing-Access/tree/NGSI-LD) | <img  src="https://cdn.jsdelivr.net/npm/simple-icons@v3/icons/postman.svg" height="15" width="15"> [Postman Collection](https://fiware.github.io/tutorials.Securing-Access/ngsi-ld.html) |
 | --- | --- | --- |
 
--->
 
 ---
 
