@@ -70,7 +70,7 @@ services:
         volumes:
             - redis-data:/data
         healthcheck:
-            test: ["CMD", "redis-cli", "ping"]
+            test: [ "CMD", "redis-cli", "ping" ]
             interval: 10s
 
     # Forwarder proxy for farmer tenant
@@ -154,6 +154,8 @@ services:
             - IOTA_HTTP_PORT=${IOTA_SOUTH_PORT}
             - IOTA_DEFAULT_RESOURCE=/iot/json
             - IOTA_PROVIDER_URL=http://iot-agent:${IOTA_NORTH_PORT}
+            - IOTA_CB_HOST=orion
+            - IOTA_CB_PORT=${ORION_LD_PORT}
             - IOTA_CB_NGSI_VERSION=ld
             - IOTA_JSON_LD_CONTEXT=http://context/ngsi-context.jsonld
             - IOTA_FALLBACK_TENANT=openiot
