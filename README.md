@@ -7,12 +7,12 @@
 
 This tutorial secures access to a FIWARE application using the entities created in the
 [previous tutorial](https://github.com/FIWARE/tutorials.Roles-Permissions). The tutorial explains appropriate use of the
-various OAuth2 grant flows, and how to use the **Keyrock** generic enabler as an Authorization Server to identify users.
-**Keyrock** is also used as a Policy Decision Point (PDP) to restrict access.
+various OAuth2 grant flows, and how to use the **Keycloak** generic enabler as an Authorization Server to identify
+users. **Keycloak** is also used as a Policy Decision Point (PDP) to restrict access.
 
-The tutorial discusses code showing how to integrate Keyrock within a web application and demonstrates examples of
-Authorization Server interactions using the **Keyrock** GUI. Some [cUrl](https://ec.haxx.se/) commands are also used to
-access the **Keyrock** REST API - [Postman documentation](https://fiware.github.io/tutorials.Securing-Access/) is also
+The tutorial discusses code showing how to integrate Keycloak within a web application and demonstrates examples of
+Authorization Server interactions using the **Keycloak** GUI. Some [cUrl](https://ec.haxx.se/) commands are also used to
+access the **Keycloak** REST API - [Postman documentation](https://fiware.github.io/tutorials.Securing-Access/) is also
 available.
 
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/66d8ba3abaf7319941b1)
@@ -70,7 +70,7 @@ available.
 > — Proverb
 
 In order to secure access to application resources, it is necessary to know two things. Firstly, who is making the
-request and secondly is the requestor permitted to access the resource? The FIWARE **Keyrock** generic enabler uses
+request and secondly is the requestor permitted to access the resource? The **Keycloak** generic enabler uses
 [OAuth2](https://oauth.net/2/) to enable third-party applications to obtain limited access to services. **OAuth2** is
 the open standard for access delegation to grant access rights. It allows notifying a resource provider (e.g. the
 Knowage Generic Enabler) that the resource owner (e.g. you) grants permission to a third-party (e.g. a Knowage
@@ -87,7 +87,7 @@ There are several common OAuth 2.0 grant flows, the details of which can be foun
 
 The primary concept is that both **Users** and **Applications** must first identify themselves using a standard OAuth2
 Challenge-Response mechanism. Thereafter a user is assigned a token which they append to every subsequent request. This
-token identifies the user, the application and the rights the user is able to exercise. **Keyrock** can then be used
+token identifies the user, the application and the rights the user is able to exercise. **Keycloak** can then be used
 with other enablers can be used to limit and lock-down access. The details of the access flows are discussed below and
 in subsequent tutorials.
 
@@ -104,7 +104,7 @@ issues authorization decisions, and then secure access by enforcing the decision
 
 ## Standard Concepts of Identity Management
 
-The following common objects are found with the **Keyrock** Identity Management database:
+The following common objects are found with the **Keycloak** Identity Management database:
 
 -   **User** - Any signed up user able to identify themselves with an eMail and password. Users can be assigned rights
     individually or as a group
@@ -158,12 +158,12 @@ This application adds OAuth2-driven security into the existing Stock Management 
 [security tutorial](https://github.com/FIWARE/tutorials.Identity-Management/) and reading it programmatically. It will
 make use of three FIWARE components - the [Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/),the
 [IoT Agent for UltraLight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/) and integrates the use of the
-[Keyrock](https://fiware-idm.readthedocs.io/en/latest/) Generic enabler. Usage of the Orion Context Broker is sufficient
-for an application to qualify as _“Powered by FIWARE”_.
+[Keycloak](https://fiware-idm.readthedocs.io/en/latest/) Generic enabler. Usage of the Orion Context Broker is
+sufficient for an application to qualify as _“Powered by FIWARE”_.
 
 Both the Orion Context Broker and the IoT Agent rely on open source [MongoDB](https://www.mongodb.com/) technology to
 keep persistence of the information they hold. We will also be using the dummy IoT devices created in the
-[previous tutorial](https://github.com/FIWARE/tutorials.IoT-Sensors/). **Keyrock** uses its own
+[previous tutorial](https://github.com/FIWARE/tutorials.IoT-Sensors/). **Keycloak** uses its own
 [MySQL](https://www.mysql.com/) database.
 
 Therefore the overall architecture will consist of the following elements:
@@ -174,7 +174,7 @@ Therefore the overall architecture will consist of the following elements:
     southbound requests using [NGSI-v2](https://fiware.github.io/specifications/OpenAPI/ngsiv2) and convert them to
     [UltraLight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
     commands for the devices
--   FIWARE [Keyrock](https://fiware-idm.readthedocs.io/en/latest/) offer a complement Identity Management System
+-   FIWARE [Keycloak](https://fiware-idm.readthedocs.io/en/latest/) offer a complement Identity Management System
     including:
     -   An OAuth2 authentication system for Applications and Users
     -   A site graphical frontend for Identity Management Administration
@@ -222,12 +222,10 @@ tutorial:
     environment:
         - "DEBUG=tutorial:*"
         - "WEB_APP_PORT=3000"
-        - "KEYROCK_URL=http://localhost"
-        - "KEYROCK_IP_ADDRESS=http://172.18.1.5"
-        - "KEYROCK_PORT=3005"
-        - "KEYROCK_CLIENT_ID=tutorial-dckr-site-0000-xpresswebapp"
-        - "KEYROCK_CLIENT_SECRET=tutorial-dckr-site-0000-clientsecret"
-        - "CALLBACK_URL=http://localhost:3000/login"
+        - "OIDC_ISSUER=http://keycloak:8080/realms/farm-management"
+        - "OIDC_CLIENT_ID=ngsi-ld-farm"
+        - "OIDC_CLIENT_SECRET=1234"
+        - "OIDC_REDIRECT_URI=http://localhost:3000/login/callback"
 ```
 
 The `tutorial` container is listening on two ports:
@@ -238,25 +236,23 @@ The `tutorial` container is listening on two ports:
 
 The `tutorial` container is driven by environment variables as shown:
 
-| Key                   | Value                                  | Description                                                                                    |
-| --------------------- | -------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| DEBUG                 | `tutorial:*`                           | Debug flag used for logging                                                                    |
-| WEB_APP_PORT          | `3000`                                 | Port used by web-app which displays the login screen & etc.                                    |
-| KEYROCK_URL           | `http://localhost`                     | This is URL of the **Keyrock** Web frontend itself, used for redirection when forwarding users |
-| KEYROCK_IP_ADDRESS    | `http://172.18.1.5`                    | This is URL of the **Keyrock** OAuth Communications                                            |
-| KEYROCK_PORT          | `3005`                                 | This is the port that **Keyrock** is listening on.                                             |
-| KEYROCK_CLIENT_ID     | `tutorial-dckr-site-0000-xpresswebapp` | The Client ID defined by Keyrock for this application                                          |
-| KEYROCK_CLIENT_SECRET | `tutorial-dckr-site-0000-clientsecret` | The Client Secret defined by Keyrock for this application                                      |
-| CALLBACK_URL          | `http://localhost:3000/login`          | The callback URL used by Keyrock when a challenge has succeeded.                               |
+| Key                | Value                                         | Description                                                       |
+| ------------------ | --------------------------------------------- | ----------------------------------------------------------------- |
+| DEBUG              | `tutorial:*`                                  | Debug flag used for logging                                       |
+| WEB_APP_PORT       | `3000`                                        | Port used by web-app which displays the login screen & etc.       |
+| OIDC_ISSUER        | `http://keycloak:8080/realms/farm-management` | The URL of the **Keycloak** realm used for authentication         |
+| OIDC_CLIENT_ID     | `ngsi-ld-farm`                                | The Client ID defined by Keycloak for this application            |
+| OIDC_CLIENT_SECRET | `1234`                                        | The Client Secret defined by Keycloak for this application        |
+| OIDC_REDIRECT_URI  | `http://localhost:3000/login/callback`        | The callback URL used by Keycloak when a challenge has succeeded. |
 
 The other `tutorial` container configuration values described in the YAML file have been described in previous tutorials
 
-The separate `KEYROCK_URL` and `KEYROCK_IP_ADDRESS` are only necessary because of the simplified Docker containerization
-used within the tutorial. The `KEYROCK_URL` variable with the value `localhost` is referring to the location externally
-exposed by the container, the `KEYROCK_IP_ADDRESS` variable refers to the same location but accessed from within the
-Docker network. Similarly the `CALLBACK_URL` contains `localhost` as it is assumed that the browser will be accessed
-from the same machine. All of these values should be replaced with appropriate proxies and DNS settings for a production
-environment, but production deployment is beyond the scope of this tutorial.
+The separate `KEYCLOAK_URL` and `KEYCLOAK_IP_ADDRESS` are only necessary because of the simplified Docker
+containerization used within the tutorial. The `KEYCLOAK_URL` variable with the value `localhost` is referring to the
+location externally exposed by the container, the `KEYCLOAK_IP_ADDRESS` variable refers to the same location but
+accessed from within the Docker network. Similarly the `CALLBACK_URL` contains `localhost` as it is assumed that the
+browser will be accessed from the same machine. All of these values should be replaced with appropriate proxies and DNS
+settings for a production environment, but production deployment is beyond the scope of this tutorial.
 
 # Start Up
 
@@ -288,74 +284,70 @@ Where `<command>` will vary depending upon the exercise we wish to activate.
 > ./services stop
 > ```
 
-### Dramatis Personae
+## Dramatis Personae
 
-The following people at `test.com` legitimately have accounts within the Application
+The following people at `fiware.farm` legitimately have accounts within the Farm Management Information System:
 
--   Alice, she will be the Administrator of the **Keyrock** Application
--   Bob, the Regional Manager of the supermarket chain - he has several store managers under him:
-    -   Manager1
-    -   Manager2
--   Charlie, the Head of Security of the supermarket chain - he has several store detectives under him:
-    -   Detective1
-    -   Detective2
+-   **Bob**, the Farm Manager - he has full control over the farm and all entities.
+-   **Carol**, a Livestock Supervisor - she manages animals and related sensors (water, filling levels).
+-   **Jenny**, a Read-Only Consultant - an external auditor who can view all farm data but cannot make changes.
+-   **Alice**, the System Administrator - she manages the Keycloak instance but does not have direct access to farm data
+    by default.
 
-The following people at `example.com` have signed up for accounts, but have no reason to be granted access
+The following person at `fiware.farm` has signed up for an account but has no reason to be granted access:
 
--   Eve - Eve the Eavesdropper
--   Mallory - Mallory the malicious attacker
--   Rob - Rob the Robber
+-   **Mallory**, the Malicious Attacker - she should be denied access to all farm resources.
 
-<details>
-  <summary>
-   For more details <b>(Click to expand)</b>
-  </summary>
+### 1. Defined Roles & Capabilities
 
-| Name       | eMail                       | Password |
-| ---------- | --------------------------- | -------- |
-| alice      | `alice-the-admin@test.com`  | `test`   |
-| bob        | `bob-the-manager@test.com`  | `test`   |
-| charlie    | `charlie-security@test.com` | `test`   |
-| manager1   | `manager1@test.com`         | `test`   |
-| manager2   | `manager2@test.com`         | `test`   |
-| detective1 | `detective1@test.com`       | `test`   |
-| detective2 | `detective2@test.com`       | `test`   |
+The following roles are defined within the `farm-management` realm:
 
-| Name    | eMail                 | Password |
-| ------- | --------------------- | -------- |
-| eve     | `eve@example.com`     | `test`   |
-| mallory | `mallory@example.com` | `test`   |
-| rob     | `rob@example.com`     | `test`   |
+| Role                       | Description                          | Access Level                           |
+| :------------------------- | :----------------------------------- | :------------------------------------- |
+| **`farm-manager`**         | Full control over the farm.          | **Read & Write** (All Entities)        |
+| **`livestock-supervisor`** | Manages animals and related sensors. | **Read & Write** (Animal, Water, etc.) |
+| **`read-only-consultant`** | External auditor/viewer.             | **Read Only** (All Entities)           |
+| **`crop-supervisor`**      | Manages fields and weather data.     | Read & Write (Fields, Soil)            |
+| **`equipment-supervisor`** | Manages tractors and machinery.      | Read & Write (Tractors)                |
+| **`field-worker`**         | Worker on the ground.                | Read (Domain), Write (Measurements)    |
 
-</details>
+### 2. User Assignments (Initial Setup)
 
-Two organizations have also been set up by Alice:
+For the purpose of this tutorial, the following users have been provisioned with the credentials below (password is
+always `test`):
 
-| Name       | Description                         | UUID                                   |
-| ---------- | ----------------------------------- | -------------------------------------- |
-| Security   | Security Group for Store Detectives | `security-team-0000-0000-000000000000` |
-| Management | Management Group for Store Managers | `managers-team-0000-0000-000000000000` |
+| User        | Group                  | Assigned Role      | Effective Rights                              |
+| :---------- | :--------------------- | :----------------- | :-------------------------------------------- |
+| **Bob**     | `farm-management`      | **`farm-manager`** | **Full Read/Write** access to all entities.   |
+| **Carol**   | `livestock-team`       | _None (Directly)_  | **Access Denied** (No role mapping for group) |
+| **Jenny**   | `external-consultants` | _None (Directly)_  | **Access Denied** (No role mapping for group) |
+| **Alice**   | _None_                 | _None_             | **Access Denied** (No roles assigned)         |
+| **Mallory** | _None_                 | _None_             | **Access Denied** (No roles assigned)         |
 
-One application, with appropriate roles and permissions has also been created:
+> [!NOTE] In the initial setup, **Bob** is the only user with functional access to the data because he is the only one
+> explicitly assigned a role (`farm-manager`). For Carol or Jenny to have access, their respective groups would need to
+> be mapped to the `livestock-supervisor` or `read-only-consultant` roles within Keycloak.
 
-| Key           | Value                                  |
-| ------------- | -------------------------------------- |
-| Client ID     | `tutorial-dckr-site-0000-xpresswebapp` |
-| Client Secret | `tutorial-dckr-site-0000-clientsecret` |
-| URL           | `http://localhost:3000`                |
-| RedirectURL   | `http://localhost:3000/login`          |
+One application (`ngsi-ld-farm`), with appropriate roles and permissions has also been created:
+
+| Key           | Value                         |
+| ------------- | ----------------------------- |
+| Client ID     | `ngsi-ld-farm`                |
+| Client Secret | `1234`                        |
+| URL           | `http://localhost:3000`       |
+| RedirectURL   | `http://localhost:3000/login` |
 
 To save time, the data creating users and organizations from the
 [previous tutorial](https://github.com/FIWARE/tutorials.Roles-Permissions) has been downloaded and is automatically
 persisted to the MySQL database on start-up so the assigned UUIDs do not change and the data does not need to be entered
 again.
 
-The **Keyrock** MySQL database deals with all aspects of application security including storing users, password etc;
+The **Keycloak** MySQL database deals with all aspects of application security including storing users, password etc;
 defining access rights and dealing with OAuth2 authorization protocols. The complete database relationship diagram can
 be found [here](https://fiware.github.io/tutorials.Securing-Access/img/keyrock-db.png)
 
 To refresh your memory about how to create users and organizations and applications, you can log in at
-`http://localhost:3005/idm` using the account `alice-the-admin@test.com` with a password of `test`.
+`http://localhost:3005/idm` using the account `alice@fiware.farm` with a password of `test`.
 
 ![](https://fiware.github.io/tutorials.Securing-Access/img/keyrock-log-in.png)
 
@@ -363,14 +355,14 @@ and look around.
 
 # OAuth2 Grant Flows
 
-As noted in the documentation, FIWARE **Keyrock** complies with the OAuth2 standard described in
+As noted in the documentation, **Keycloak** complies with the OAuth2 standard described in
 [RFC 6749](http://tools.ietf.org/html/rfc6749) and supports all four standard grant types defined there.
 
 When making requests the `Authorization` header is built by combining the application Client ID and Client Secret
-credentials provided by the **Keyrock** separated by a `:` and base-64encoded. The value can be generated as shown:
+credentials provided by the **Keycloak** separated by a `:` and base-64encoded. The value can be generated as shown:
 
 ```console
-echo tutorial-dckr-site-0000-xpresswebapp:tutorial-dckr-site-0000-clientsecret | base64
+echo ngsi-ld-farm:1234 | base64
 ```
 
 ```
@@ -391,7 +383,7 @@ password credentials grant_ or password grant should only be used when:
 ![](https://fiware.github.io/tutorials.Securing-Access/img/user-credentials.png)
 
 This is the most appropriate usage within the Supermarket Tutorial Application, as the Web-App has been written by us
-and we can trust it to pass on credentials to an instance of **Keyrock** also owned by us. As you can see from the
+and we can trust it to pass on credentials to an instance of **Keycloak** also owned by us. As you can see from the
 diagram, the user must type their own password into the web-app client itself
 
 ### Logging-in with a Password
@@ -407,7 +399,7 @@ curl -iX POST \
   -H 'Accept: application/json' \
   -H 'Authorization: Basic dHV0b3JpYWwtZGNrci1zaXRlLTAwMDAteHByZXNzd2ViYXBwOnR1dG9yaWFsLWRja3Itc2l0ZS0wMDAwLWNsaWVudHNlY3JldA==' \
   -H 'Content-Type: application/x-www-form-urlencoded' \
-  --data "username=alice-the-admin@test.com&password=test&grant_type=password"
+  --data "username=alice@fiware.farm&password=test&grant_type=password"
 ```
 
 > **Note:** the username in the grant matches the email address of the user in this instance.
@@ -446,10 +438,10 @@ The username (Alice) is returned as shown:
     "organizations": [],
     "displayName": "",
     "roles": [],
-    "app_id": "tutorial-dckr-site-0000-xpresswebapp",
+    "app_id": "ngsi-ld-farm",
     "trusted_apps": [],
     "isGravatarEnabled": false,
-    "email": "alice-the-admin@test.com",
+    "email": "alice@fiware.farm",
     "id": "aaaaaaaa-good-0000-0000-000000000000",
     "app_azf_domain": "",
     "username": "alice",
@@ -512,7 +504,7 @@ The response displays the user on the top right of the screen, details of the to
 
 The [Authorization Code](https://tools.ietf.org/html/rfc6749#section-1.3.1) grant flow can be used where the client (in
 our case the Tutorial Web-application) doesn't need access to any passwords directly - it just needs to know who the
-user is. With the Authorization Code grant, the user is redirected to an Authorization Server such as **Keyrock**, logs
+user is. With the Authorization Code grant, the user is redirected to an Authorization Server such as **Keycloak**, logs
 in there and permits access. The response returns an access-code which can be exchanged for an access-token which then
 identifies the user.
 
@@ -524,7 +516,7 @@ GitHub.
 
 ### Authorization Code - Sample Code
 
-A user must first be redirected to **Keyrock**, requesting a `code`, `oa.getAuthorizeUrl()` is returning a URL of the
+A user must first be redirected to **Keycloak**, requesting a `code`, `oa.getAuthorizeUrl()` is returning a URL of the
 form `/oauth/authorize?response_type=code&client_id={{client-id}}&state=xyz&redirect_uri={{callback_url}}`
 
 ```javascript
@@ -535,7 +527,7 @@ function authCodeGrant(req, res) {
 ```
 
 The after the User authorizes access, the response is received by the `redirect_uri` and is handled in the code below, a
-interim access code is received from **Keyrock** and second request must be made to obtain a usable `access_token`.
+interim access code is received from **Keycloak** and second request must be made to obtain a usable `access_token`.
 
 ```javascript
 function authCodeGrantCallback(req, res) {
@@ -555,7 +547,7 @@ function authCodeGrantCallback(req, res) {
 It is possible to invoke the User Credentials grant flow programmatically, by bringing up the page
 `http://localhost:3000/` and clicking on the Authorization Code Button
 
-The user is initially redirected to **Keyrock**, and must log in
+The user is initially redirected to **Keycloak**, and must log in
 
 ![](https://fiware.github.io/tutorials.Securing-Access/img/keyrock-log-in.png)
 
@@ -565,21 +557,21 @@ The user must then authorize the request
 
 The response displays the user on the top right of the screen, details of the token are also flashed onto the screen.
 
-> **Note** Unless you deliberately log out of **Keyrock** > `http://localhost:3005`, the existing **Keyrock** session
-> which has already permitted access will be used for subsequent authorization requests, so the **Keyrock** login screen
-> will not be shown again.
+> **Note** Unless you deliberately log out of **Keycloak** > `http://localhost:3005`, the existing **Keycloak** session
+> which has already permitted access will be used for subsequent authorization requests, so the **Keycloak** login
+> screen will not be shown again.
 
 ## Implicit Grant
 
 The [Implicit](https://tools.ietf.org/html/rfc6749#section-1.3.2) grant flow is a simplified form of the Authorization
-grant flow where **Keyrock** returns an `access_token` directly rather than returning an interim access-code. This is
+grant flow where **Keycloak** returns an `access_token` directly rather than returning an interim access-code. This is
 less secure than the Authcode flow but can be used in some client-side applications
 
 ![](https://fiware.github.io/tutorials.Securing-Access/img/implicit-flow.png)
 
 ### Implicit Grant - Sample Code
 
-A user must first be redirected to **Keyrock**, requesting a `token`, `oa.getAuthorizeUrl()` is returning a URL of the
+A user must first be redirected to **Keycloak**, requesting a `token`, `oa.getAuthorizeUrl()` is returning a URL of the
 form `/oauth/authorize?response_type=token&client_id={{client-id}}&state=xyz&redirect_uri={{callback_url}}`
 
 ```javascript
@@ -590,7 +582,7 @@ function implicitGrant(req, res) {
 ```
 
 The after the User authorizes access, the response is received by the `redirect_uri` and is handled in the code below, a
-usable access token is received from **Keyrock**
+usable access token is received from **Keycloak**
 
 ```javascript
 function implicitGrantCallback(req, res) {
@@ -605,7 +597,7 @@ function implicitGrantCallback(req, res) {
 It is possible to invoke the Implicit grant flow programmatically, by bringing up the page `http://localhost:3000/` and
 clicking on the Implicit Grant Button
 
-The user is initially redirected to **Keyrock**, and must log in
+The user is initially redirected to **Keycloak**, and must log in
 
 ![](https://fiware.github.io/tutorials.Securing-Access/img/keyrock-log-in.png)
 
@@ -615,7 +607,7 @@ The user must then authorize the request
 
 The response displays the user on the top right of the screen, details of the token are also flashed onto the screen.
 
-> **Note** Unless you deliberately log out of **Keyrock** > `http://localhost:3005`, the existing **Keyrock** session
+> **Note** Unless you deliberately log out of **Keycloak** > `http://localhost:3005`, the existing **Keycloak** session
 > which has already permitted access will be used for subsequent authorization request.
 
 ## Client Credentials Grant
@@ -695,7 +687,7 @@ curl -iX POST \
   -H 'Accept: application/json' \
   -H 'Authorization: Basic dHV0b3JpYWwtZGNrci1zaXRlLTAwMDAteHByZXNzd2ViYXBwOnR1dG9yaWFsLWRja3Itc2l0ZS0wMDAwLWNsaWVudHNlY3JldA==' \
   -H 'Content-Type: application/x-www-form-urlencoded' \
-  --data "username=alice-the-admin@test.com&password=test&grant_type=password"
+  --data "username=alice@fiware.farm&password=test&grant_type=password"
 ```
 
 #### Response
@@ -779,7 +771,7 @@ There are three Levels of PDP Access Control:
 -   Level 2: Basic Authorization - Check which resources and verbs the currently logged in user should have access to
 -   Level 3: Advanced Authorization - Fine grained control through [XACML](https://en.wikipedia.org/wiki/XACML)
 
-**Keyrock** can be used to offer a simple Level 1 and 2 PDP on its own, and can offer level 3 combined with additional
+**Keycloak** can be used to offer a simple Level 1 and 2 PDP on its own, and can offer level 3 combined with additional
 [generic enablers](https://github.com/FIWARE/tutorials.XACML-Access-Rules). This tutorial will only be concerned with
 the logged in site itself. Securing other services in conjunction with a
 [PEP Proxy](https://fiware-pep-proxy.readthedocs.io/en/latest) will be dealt with in a
@@ -787,12 +779,12 @@ the logged in site itself. Securing other services in conjunction with a
 
 ## Authentication Access
 
-If **Keyrock** (or any other OAuth2 provider) has successfully logged in, an `access_token` has been provided saying
+If **Keycloak** (or any other OAuth2 provider) has successfully logged in, an `access_token` has been provided saying
 that the user exists. This information is sufficient to **authenticate** a User
 
 Level 1 PDP can be used in conjunction with any OAuth2 provider using any flow.
 
-If a user has authenticated using **Keyrock**, the freshness of the access token can be checked by making a GET request
+If a user has authenticated using **Keycloak**, the freshness of the access token can be checked by making a GET request
 to the `/user` endpoint.
 
 #### :six: Request
@@ -816,7 +808,7 @@ function pdpAuthentication(req, res, next) {
 }
 ```
 
-To check whether a **Keyrock** `access_token` has expired, you can try to retrieve the current user details on request:
+To check whether a **Keycloak** `access_token` has expired, you can try to retrieve the current user details on request:
 
 ```javascript
 function pdpAuthentication(req, res, next) {
@@ -838,14 +830,14 @@ function pdpAuthentication(req, res, next) {
 
 ## Basic Authorization
 
-Level 2 PDP can only be used with our own trusted instance of **Keyrock**, usually via the Password Grant flow.
+Level 2 PDP can only be used with our own trusted instance of **Keycloak**, usually via the Password Grant flow.
 
-If we are using our own trusted instance of **Keyrock**, once a user has signed in and obtained an `access_token`, the
+If we are using our own trusted instance of **Keycloak**, once a user has signed in and obtained an `access_token`, the
 `access_token` can be stored in session and used to retrieve user details on demand. The request for user details may be
 extended to include resource permissions. Using this information it is possible to permit or deny access to individual
 resources.
 
-As a reminder, **Keyrock** permissions are based on `resource` (e.g. URL) and `action` (which can be mapped to an HTTP
+As a reminder, **Keycloak** permissions are based on `resource` (e.g. URL) and `action` (which can be mapped to an HTTP
 verb). We can retrieve extended user details including access permissions by adding additional parameters to a `/user`
 GET request
 
@@ -868,7 +860,7 @@ Where :
 The response include an `authorization_decision` attribute which permits or denies access.
 
 In the example below the access token used belonged to Bob the manager, and he has been granted access to the
-`/app/price-change` endpoint within the `tutorial-dckr-site-0000-xpresswebapp`
+`/app/price-change` endpoint within the `ngsi-ld-farm`
 
 ```json
 {
@@ -880,7 +872,7 @@ In the example below the access token used belonged to Bob the manager, and he h
             "name": "Management"
         }
     ],
-    "app_id": "tutorial-dckr-site-0000-xpresswebapp",
+    "app_id": "ngsi-ld-farm",
     "trusted_apps": [],
     "isGravatarEnabled": false,
     "email": "bob-the-manager@test.com",
@@ -894,7 +886,7 @@ In the example below the access token used belonged to Bob the manager, and he h
 
 ### Basic Authorization - Sample Code
 
-Keyrock can therefore be used as a PDP on its own, we merely need to check if the user has access to the resource and
+Keycloak can therefore be used as a PDP on its own, we merely need to check if the user has access to the resource and
 set a flag:
 
 ```javascript
