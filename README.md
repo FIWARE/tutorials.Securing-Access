@@ -127,7 +127,7 @@ Additionally two further non-human application objects can be secured within a F
 The relationship between the objects can be seen below - the entities marked in red are used directly within this
 tutorial:
 
-![](https://fiware.github.io/tutorials.Securing-Access/img/entities.png)
+![](https://fiware.github.io/tutorials.Securing-Access/img/entities-ld.png)
 
 # Prerequisites
 
@@ -153,46 +153,44 @@ to provide a command-line functionality similar to a Linux distribution on Windo
 
 # Architecture
 
-This application adds OAuth2-driven security into the existing Stock Management and Sensors-based application created in
+This application adds OAuth2-driven security into the existing Farm Management and Sensors-based application created in
 [previous tutorials](https://github.com/FIWARE/tutorials.IoT-Agent/) by using the data created in the first
 [security tutorial](https://github.com/FIWARE/tutorials.Identity-Management/) and reading it programmatically. It will
-make use of three FIWARE components - the [Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/),the
-[IoT Agent for UltraLight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/) and integrates the use of the
-[Keycloak](https://fiware-idm.readthedocs.io/en/latest/) Generic enabler. Usage of the Orion Context Broker is
-sufficient for an application to qualify as _“Powered by FIWARE”_.
+make use of three FIWARE components - the [Orion-LD Context Broker](https://fiware-orion.readthedocs.io/en/latest/), the
+[IoT Agent for JSON](https://fiware-iotagent-json.readthedocs.io/en/latest/) and integrates the use of
+[Keycloak](https://www.keycloak.org/) as the Identity and Access Management server. Usage of the Orion-LD Context Broker
+is sufficient for an application to qualify as _“Powered by FIWARE”_.
 
-Both the Orion Context Broker and the IoT Agent rely on open source [MongoDB](https://www.mongodb.com/) technology to
+Both the Orion-LD Context Broker and the IoT Agent rely on open source [MongoDB](https://www.mongodb.com/) technology to
 keep persistence of the information they hold. We will also be using the dummy IoT devices created in the
 [previous tutorial](https://github.com/FIWARE/tutorials.IoT-Sensors/). **Keycloak** uses its own
-[MySQL](https://www.mysql.com/) database.
+[PostgreSQL](https://www.postgresql.org/) database.
 
 Therefore the overall architecture will consist of the following elements:
 
--   The FIWARE [Orion Context Broker](https://fiware-orion.readthedocs.io/en/latest/) which will receive requests using
-    [NGSI-v2](https://fiware.github.io/specifications/OpenAPI/ngsiv2)
--   The FIWARE [IoT Agent for UltraLight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/) which will receive
-    southbound requests using [NGSI-v2](https://fiware.github.io/specifications/OpenAPI/ngsiv2) and convert them to
-    [UltraLight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
+-   The FIWARE [Orion-LD Context Broker](https://fiware-orion.readthedocs.io/en/latest/) which will receive requests
+    using [NGSI-LD](https://forge.etsi.org/swagger/ui/?url=https://forge.etsi.org/rep/NGSI-LD/NGSI-LD/raw/master/spec/updated/generated/full_api.json)
+-   The FIWARE [IoT Agent for JSON](https://fiware-iotagent-json.readthedocs.io/en/latest/) which will receive
+    southbound requests using [NGSI-LD](https://forge.etsi.org/swagger/ui/?url=https://forge.etsi.org/rep/NGSI-LD/NGSI-LD/raw/master/spec/updated/generated/full_api.json)
+    and convert them to [JSON](https://fiware-iotagent-json.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
     commands for the devices
--   FIWARE [Keycloak](https://fiware-idm.readthedocs.io/en/latest/) offer a complement Identity Management System
-    including:
-    -   An OAuth2 authentication system for Applications and Users
-    -   A site graphical frontend for Identity Management Administration
-    -   An equivalent REST API for Identity Management via HTTP requests
+-   [Keycloak](https://www.keycloak.org/) Identity and Access Management offering:
+    -   An OAuth2 / OIDC authentication system for Applications and Users
+    -   A graphical frontend for Identity Management Administration
+    -   A REST API for Identity Management via HTTP requests
 -   The underlying [MongoDB](https://www.mongodb.com/) database :
-    -   Used by the **Orion Context Broker** to hold context data information such as data entities, subscriptions and
+    -   Used by the **Orion-LD Context Broker** to hold context data information such as data entities, subscriptions and
         registrations
     -   Used by the **IoT Agent** to hold device information such as device URLs and Keys
--   A [MySQL](https://www.mysql.com/) database :
-    -   Used to persist user identities, applications, roles and permissions
--   The **Stock Management Frontend** does the following:
-    -   Displays store information
-    -   Shows which products can be bought at each store
-    -   Allows users to "buy" products and reduce the stock count.
+-   A [PostgreSQL](https://www.postgresql.org/) database :
+    -   Used by **Keycloak** to persist user identities, applications, roles and permissions
+-   The **Farm Management Frontend** does the following:
+    -   Displays farm building and sensor information
+    -   Shows which animals and equipment are present
+    -   Allows authorized users to send commands to IoT devices
     -   Allows authorized users into restricted areas
--   A webserver acting as set of [dummy IoT devices](https://github.com/FIWARE/tutorials.IoT-Sensors/tree/NGSI-v2) using
-    the
-    [UltraLight 2.0](https://fiware-iotagent-ul.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
+-   A webserver acting as set of [dummy IoT devices](https://github.com/FIWARE/tutorials.IoT-Sensors/) using
+    the [JSON](https://fiware-iotagent-json.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
     protocol running over HTTP - access to certain resources is restricted.
 
 Since all interactions between the elements are initiated by HTTP requests, the entities can be containerized and run
@@ -200,68 +198,64 @@ from exposed ports.
 
 ![](https://fiware.github.io/tutorials.Securing-Access/img/architecture.png)
 
-The necessary configuration information for adding security to the **Stock Management Frontend** can be found in the
+The necessary configuration information for adding security to the **Farm Management Frontend** can be found in the
 `tutorial` section of the associated `docker-compose.yml` file - only the relevant variables are shown below:
 
 ## Tutorial Security Configuration
 
 ```yaml
 tutorial:
-    image: fiware/tutorials.context-provider
+    image: quay.io/fiware/tutorials.ngsi-ld
     hostname: tutorial
     container_name: fiware-tutorial
     networks:
         default:
-            ipv4_address: 172.18.1.7
+            ipv4_address: 172.18.1.11
     expose:
-        - "3000"
-        - "3001"
+        - "${TUTORIAL_APP_PORT}"
     ports:
-        - "3000:3000"
-        - "3001:3001"
+        - "${TUTORIAL_APP_PORT}:${TUTORIAL_APP_PORT}"
     environment:
-        - "DEBUG=tutorial:*"
-        - "WEB_APP_PORT=3000"
-        - "OIDC_ISSUER=http://keycloak:8080/realms/farm-management"
-        - "OIDC_CLIENT_ID=ngsi-ld-farm"
-        - "OIDC_CLIENT_SECRET=1234"
-        - "OIDC_REDIRECT_URI=http://localhost:3000/login/callback"
+        - DEBUG=tutorial:*
+        - WEB_APP_PORT=${TUTORIAL_APP_PORT}
+        - SECURE_ENDPOINTS=true
+        - OIDC_ISSUER=http://keycloak:8080/realms/farm-management
+        - KEYCLOAK_URL=http://localhost:${KEYCLOAK_PORT}/realms/farm-management
+        - OIDC_CLIENT_ID=ngsi-ld-farm
+        - OIDC_CLIENT_SECRET=1234
+        - OIDC_REDIRECT_URI=http://localhost:${TUTORIAL_APP_PORT}/login/callback
+        - OIDC_SCOPE=openid profile email
 ```
-
-The `tutorial` container is listening on two ports:
-
--   Port `3000` is exposed so we can see the web page displaying the Dummy IoT devices.
--   Port `3001` is exposed purely for tutorial access - so that cUrl or Postman can make UltraLight commands without
-    being part of the same network.
 
 The `tutorial` container is driven by environment variables as shown:
 
-| Key                | Value                                         | Description                                                       |
-| ------------------ | --------------------------------------------- | ----------------------------------------------------------------- |
-| DEBUG              | `tutorial:*`                                  | Debug flag used for logging                                       |
-| WEB_APP_PORT       | `3000`                                        | Port used by web-app which displays the login screen & etc.       |
-| OIDC_ISSUER        | `http://keycloak:8080/realms/farm-management` | The URL of the **Keycloak** realm used for authentication         |
-| OIDC_CLIENT_ID     | `ngsi-ld-farm`                                | The Client ID defined by Keycloak for this application            |
-| OIDC_CLIENT_SECRET | `1234`                                        | The Client Secret defined by Keycloak for this application        |
-| OIDC_REDIRECT_URI  | `http://localhost:3000/login/callback`        | The callback URL used by Keycloak when a challenge has succeeded. |
+| Key                | Value                                                    | Description                                                                         |
+| ------------------ | -------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| DEBUG              | `tutorial:*`                                             | Debug flag used for logging                                                         |
+| WEB_APP_PORT       | `3000`                                                   | Port used by web-app which displays the login screen etc.                           |
+| SECURE_ENDPOINTS   | `true`                                                   | Enables PDP enforcement on protected routes                                         |
+| OIDC_ISSUER        | `http://keycloak:8080/realms/farm-management`            | Internal URL of the **Keycloak** realm — used for server-to-server calls            |
+| KEYCLOAK_URL       | `http://localhost:3005/realms/farm-management`           | Public URL of **Keycloak** — used for browser redirects (login / logout)            |
+| OIDC_CLIENT_ID     | `ngsi-ld-farm`                                           | The Client ID registered in Keycloak for this application                           |
+| OIDC_CLIENT_SECRET | `1234`                                                   | The Client Secret registered in Keycloak for this application                       |
+| OIDC_REDIRECT_URI  | `http://localhost:3000/login/callback`                   | The callback URL Keycloak will redirect to after a successful authentication        |
+| OIDC_SCOPE         | `openid profile email`                                   | OIDC scopes requested during authentication                                         |
 
-The other `tutorial` container configuration values described in the YAML file have been described in previous tutorials
+The other `tutorial` container configuration values described in the YAML file have been described in previous tutorials.
 
-The separate `KEYCLOAK_URL` and `KEYCLOAK_IP_ADDRESS` are only necessary because of the simplified Docker
-containerization used within the tutorial. The `KEYCLOAK_URL` variable with the value `localhost` is referring to the
-location externally exposed by the container, the `KEYCLOAK_IP_ADDRESS` variable refers to the same location but
-accessed from within the Docker network. Similarly the `CALLBACK_URL` contains `localhost` as it is assumed that the
-browser will be accessed from the same machine. All of these values should be replaced with appropriate proxies and DNS
-settings for a production environment, but production deployment is beyond the scope of this tutorial.
+`OIDC_ISSUER` and `KEYCLOAK_URL` are split because the tutorial runs inside Docker. The `OIDC_ISSUER` value uses the
+internal Docker hostname `keycloak` for server-to-server communication (token exchange, introspection). The
+`KEYCLOAK_URL` value uses `localhost` — the port that is exposed to the host — so that browser redirects for login and
+logout resolve correctly. All of these values should be replaced with appropriate DNS entries for a production
+environment, but production deployment is beyond the scope of this tutorial.
 
 # Start Up
 
 To start the installation, do the following:
 
 ```console
-git clone https://github.com/FIWARE/tutorials.Securing-Access.git
-cd tutorials.Securing-Access
-git checkout NGSI-v2
+git clone https://github.com/FIWARE/tutorials.Step-by-Step.git
+cd NGSI-LD/tutorials.Securing-Access
 
 ./services create
 ```
@@ -269,7 +263,7 @@ git checkout NGSI-v2
 > **Note** The initial creation of Docker images can take up to three minutes
 
 Thereafter, all services can be initialized from the command-line by running the
-[services](https://github.com/FIWARE/tutorials.Securing-Access/blob/NGSI-v2/services) Bash script provided within the
+[services](https://github.com/FIWARE/tutorials.Securing-Access/blob/NGSI-LD/services) Bash script provided within the
 repository:
 
 ```console
@@ -338,18 +332,17 @@ One application (`ngsi-ld-farm`), with appropriate roles and permissions has als
 | RedirectURL   | `http://localhost:3000/login` |
 
 To save time, the data creating users and organizations from the
-[previous tutorial](https://github.com/FIWARE/tutorials.Roles-Permissions) has been downloaded and is automatically
-persisted to the MySQL database on start-up so the assigned UUIDs do not change and the data does not need to be entered
-again.
+[previous tutorial](https://github.com/FIWARE/tutorials.Roles-Permissions) has been imported and is automatically
+persisted to the PostgreSQL database on start-up so the assigned UUIDs do not change and the data does not need to be
+entered again.
 
-The **Keycloak** MySQL database deals with all aspects of application security including storing users, password etc;
-defining access rights and dealing with OAuth2 authorization protocols. The complete database relationship diagram can
-be found [here](https://fiware.github.io/tutorials.Securing-Access/img/keyrock-db.png)
+The **Keycloak** PostgreSQL database deals with all aspects of application security including storing users, passwords
+etc.; defining access rights and dealing with OAuth2 / OIDC authorization protocols.
 
-To refresh your memory about how to create users and organizations and applications, you can log in at
-`http://localhost:3005/idm` using the account `alice@fiware.farm` with a password of `test`.
+To refresh your memory about how to create users, groups and clients, you can log in to the Keycloak Admin Console at
+`http://localhost:3005` using the account `alice` with a password of `test`.
 
-![](https://fiware.github.io/tutorials.Securing-Access/img/keyrock-log-in.png)
+![](https://fiware.github.io/tutorials.Securing-Access/img/tutorial-log-in.png)
 
 and look around.
 
@@ -359,22 +352,22 @@ As noted in the documentation, **Keycloak** complies with the OAuth2 standard de
 [RFC 6749](http://tools.ietf.org/html/rfc6749) and supports all four standard grant types defined there.
 
 When making requests the `Authorization` header is built by combining the application Client ID and Client Secret
-credentials provided by the **Keycloak** separated by a `:` and base-64encoded. The value can be generated as shown:
+credentials provided by **Keycloak**, separated by a `:` and base-64 encoded. The value can be generated as shown:
 
 ```console
-echo ngsi-ld-farm:1234 | base64
+echo -n ngsi-ld-farm:1234 | base64
 ```
 
 ```
-dHV0b3JpYWwtZGNrci1zaXRlLTAwMDAteHByZXNzd2ViYXBwOnR1dG9yaWFsLWRja3Itc2l0ZS0wMDAwLWNsaWVudHNlY3JldAo=
+bmdzaS1sZC1mYXJtOjEyMzQ=
 ```
 
-All four major grant flows can be demonstrated within the tutorial application, the actual flow to pick will depend on
+All four major grant flows can be demonstrated within the tutorial application; the actual flow to pick will depend on
 your own use case.
 
 ## User Credentials Grant
 
-The [User Gredentials](https://tools.ietf.org/html/rfc6749#section-1.3.3) grant flow, also known as the _resource owner
+The [User Credentials](https://tools.ietf.org/html/rfc6749#section-1.3.3) grant flow, also known as the _resource owner
 password credentials grant_ or password grant should only be used when:
 
 -   A User wants to log into an application via a web-app client
@@ -382,110 +375,121 @@ password credentials grant_ or password grant should only be used when:
 
 ![](https://fiware.github.io/tutorials.Securing-Access/img/user-credentials.png)
 
-This is the most appropriate usage within the Supermarket Tutorial Application, as the Web-App has been written by us
-and we can trust it to pass on credentials to an instance of **Keycloak** also owned by us. As you can see from the
-diagram, the user must type their own password into the web-app client itself
+This is the most appropriate usage within the Farm Management Tutorial Application, as the Web-App has been written by
+us and we can trust it to pass on credentials to a **Keycloak** instance also owned by us. As you can see from the
+diagram, the user must type their own password into the web-app client itself.
 
 ### Logging-in with a Password
 
 #### :one: Request
 
-To log in using the user-credentials flow send a POST request to the `oauth2/token` endpoint with the
-`grant_type=password`
+To log in using the User Credentials flow, send a POST request to the Keycloak token endpoint with
+`grant_type=password`:
 
 ```console
 curl -iX POST \
-  'http://localhost:3005/oauth2/token' \
-  -H 'Accept: application/json' \
-  -H 'Authorization: Basic dHV0b3JpYWwtZGNrci1zaXRlLTAwMDAteHByZXNzd2ViYXBwOnR1dG9yaWFsLWRja3Itc2l0ZS0wMDAwLWNsaWVudHNlY3JldA==' \
+  'http://localhost:3005/realms/farm-management/protocol/openid-connect/token' \
   -H 'Content-Type: application/x-www-form-urlencoded' \
-  --data "username=alice@fiware.farm&password=test&grant_type=password"
+  --data 'username=bob%40fiware.farm&password=test&grant_type=password&client_id=ngsi-ld-farm&client_secret=1234&scope=openid+profile+email'
 ```
 
-> **Note:** the username in the grant matches the email address of the user in this instance.
+> **Note:** the username in the grant is the email address of the user in this instance.
 
 #### Response
 
-The response returns an `access_token` to identify the user:
+The response returns an `access_token` and `id_token` to identify the user:
 
 ```json
 {
-    "access_token": "a7e22dfe2bd7d883c8621b9eb50797a7f126eeab",
+    "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ii4uLiJ9...",
+    "expires_in": 300,
+    "refresh_expires_in": 1800,
+    "refresh_token": "eyJhbGciOiJIUzUxMiIsInR5cCIgOiAiSldUIiwia2lkIiA6Ii4uLiJ9...",
     "token_type": "Bearer",
-    "expires_in": 3599,
-    "refresh_token": "05e386edd9f95ed0e599c5004db8573e86dff874"
+    "id_token": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6Ii4uLiJ9...",
+    "scope": "openid profile email"
 }
 ```
 
 ### Retrieving User Details from an Access Token
 
-The access code can then be used with a GET request to the `/user` endpoint to obtain user details, for example, taking
-the `access_token` from the response above
+The access token can then be used with a GET request to the Keycloak `/userinfo` endpoint to obtain user details:
 
 #### :two: Request
 
 ```console
 curl -X GET \
-  'http://localhost:3005/user?access_token=a7e22dfe2bd7d883c8621b9eb50797a7f126eeab'
+  'http://localhost:3005/realms/farm-management/protocol/openid-connect/userinfo' \
+  -H 'Authorization: Bearer <access_token>'
 ```
 
 #### Response
 
-The username (Alice) is returned as shown:
+The username (bob) and associated claims are returned as shown:
 
 ```json
 {
-    "organizations": [],
-    "displayName": "",
-    "roles": [],
-    "app_id": "ngsi-ld-farm",
-    "trusted_apps": [],
-    "isGravatarEnabled": false,
-    "email": "alice@fiware.farm",
-    "id": "aaaaaaaa-good-0000-0000-000000000000",
-    "app_azf_domain": "",
-    "username": "alice",
-    "trusted_applications": []
+    "sub": "bbbbbbbb-good-0000-0000-000000000000",
+    "email_verified": true,
+    "name": "Bob Manager",
+    "preferred_username": "bob",
+    "given_name": "Bob",
+    "family_name": "Manager",
+    "email": "bob@fiware.farm",
+    "realm_access": {
+        "roles": ["farm-manager"]
+    }
 }
 ```
 
 ### User Credentials - Sample Code
 
-The code delegates all the OAuth2 calls to a separate library
-[oauth2.js](https://github.com/FIWARE/tutorials.Step-by-Step/blob/master/context-provider/lib/oauth2.js). Every request
-includes the standard OAuth2 header and each request is wrapped in a promise to simplify the application code. The User
-Credentials flow is invoked using the `oa.getOAuthPasswordCredentials()` function - once an `access_token` is received,
-the user details are retrieved using a separate `oa.get()` call as shown:
+The code delegates all Keycloak interactions to a separate library
+[keycloak.js](https://github.com/FIWARE/tutorials.Step-by-Step/blob/master/NGSI-LD/app/lib/keycloak.js). Every request
+is wrapped in a promise to simplify the application code. The User Credentials flow is invoked using
+`keycloak.getUserCredentials()` - once an `access_token` is received the user details are retrieved using a separate
+`keycloak.getUserInfo()` call as shown:
 
 ```javascript
 function userCredentialGrant(req, res) {
     const email = req.body.email;
     const password = req.body.password;
 
-    oa.getOAuthPasswordCredentials(email, password)
-        .then((results) => {
-            logAccessToken(req, results.access_token);
-            return getUserFromAccessToken(req, results.access_token);
+    keycloak
+        .getUserCredentials(email, password)
+        .then(({ status, body }) => {
+            if (status !== 200 || !body.access_token) {
+                throw new Error(body.error_description || 'Password grant failed');
+            }
+            storeTokens(req, body);
+            return keycloak.getUserInfo(body.access_token);
         })
-        .then((user) => {
-            // Store User and return
+        .then(({ body: user }) => {
+            const username = user.preferred_username || user.sub;
+            req.session.username = username;
+            req.flash('success', username + ' logged in with <strong>Password</strong>');
+            return res.redirect('/');
+        })
+        .catch((error) => {
+            req.flash('error', 'Access Denied');
+            return res.redirect('/');
         });
 }
 ```
 
+The underlying `getUserCredentials()` function posts the password grant to the Keycloak token endpoint:
+
 ```javascript
-function getUserFromAccessToken(req, accessToken) {
-    return new Promise(function (resolve, reject) {
-        oa.get(keyrockIPAddress + "/user", accessToken)
-            .then((response) => {
-                const user = JSON.parse(response);
-                return resolve(user);
-            })
-            .catch((error) => {
-                req.flash("error", "User not found");
-                return reject(error);
-            });
+function getUserCredentials(username, password) {
+    const body = querystring.stringify({
+        grant_type: 'password',
+        client_id: clientId,
+        client_secret: clientSecret,
+        username,
+        password,
+        scope
     });
+    return post(tokenEndpoint, body);
 }
 ```
 
@@ -496,9 +500,9 @@ It is possible to invoke the User Credentials grant flow programmatically, by br
 
 ![](https://fiware.github.io/tutorials.Securing-Access/img/tutorial-log-in.png)
 
-The response displays the user on the top right of the screen, details of the token are also flashed onto the screen:
+The response displays the user on the top right of the screen, with a success flash message:
 
-![](https://fiware.github.io/tutorials.Securing-Access/img/tutorial-reponse.png)
+![](https://fiware.github.io/tutorials.Securing-Access/img/tutorial-response.png)
 
 ## Authorization Code Grant
 
@@ -516,48 +520,57 @@ GitHub.
 
 ### Authorization Code - Sample Code
 
-A user must first be redirected to **Keycloak**, requesting a `code`, `oa.getAuthorizeUrl()` is returning a URL of the
-form `/oauth/authorize?response_type=code&client_id={{client-id}}&state=xyz&redirect_uri={{callback_url}}`
+A user must first be redirected to **Keycloak** using PKCE. The `keycloak.getAuthorizeUrl()` function returns a URL of
+the form:
+`/protocol/openid-connect/auth?response_type=code&client_id={{client-id}}&state=xyz&redirect_uri={{callback_url}}&code_challenge={{challenge}}&code_challenge_method=S256`
 
 ```javascript
 function authCodeGrant(req, res) {
-    const path = oa.getAuthorizeUrl("code");
-    return res.redirect(path);
+    const verifier = keycloak.generateCodeVerifier();
+    const challenge = keycloak.generateCodeChallenge(verifier);
+    const state = require('crypto').randomBytes(16).toString('hex');
+
+    req.session.pkce_verifier = verifier;
+    req.session.oauth_state = state;
+
+    const url = keycloak.getAuthorizeUrl(state, challenge);
+    return res.redirect(url);
 }
 ```
 
-The after the User authorizes access, the response is received by the `redirect_uri` and is handled in the code below, a
-interim access code is received from **Keycloak** and second request must be made to obtain a usable `access_token`.
+After the user authenticates, the response is received at the `redirect_uri` callback. The authorization code is
+exchanged for tokens using PKCE:
 
 ```javascript
 function authCodeGrantCallback(req, res) {
-    return oa
-        .getOAuthAccessToken(req.query.code)
-        .then((results) => {
-            return getUserFromAccessToken(req, results.access_token);
+    const code = req.query.code;
+    const verifier = req.session.pkce_verifier;
+
+    return keycloak
+        .exchangeCode(code, verifier)
+        .then(({ status, body }) => {
+            storeTokens(req, body);
+            return keycloak.getUserInfo(body.access_token);
         })
-        .then((user) => {
-            // Store User and return
+        .then(({ body: user }) => {
+            req.session.username = user.preferred_username || user.sub;
+            return res.redirect('/');
         });
 }
 ```
 
 ### Authorization Code - Running the Example
 
-It is possible to invoke the User Credentials grant flow programmatically, by bringing up the page
-`http://localhost:3000/` and clicking on the Authorization Code Button
+It is possible to invoke the Authorization Code grant flow programmatically, by bringing up the page
+`http://localhost:3000/` and clicking on the **Authorization Code** link.
 
-The user is initially redirected to **Keycloak**, and must log in
+The user is redirected to **Keycloak** and must log in:
 
-![](https://fiware.github.io/tutorials.Securing-Access/img/keyrock-log-in.png)
+![](https://fiware.github.io/tutorials.Securing-Access/img/tutorial-log-in.png)
 
-The user must then authorize the request
+The response displays the user on the top right of the screen, with a success flash message.
 
-![](https://fiware.github.io/tutorials.Securing-Access/img/keyrock-authorize.png)
-
-The response displays the user on the top right of the screen, details of the token are also flashed onto the screen.
-
-> **Note** Unless you deliberately log out of **Keycloak** > `http://localhost:3005`, the existing **Keycloak** session
+> **Note** Unless you deliberately log out of **Keycloak** at `http://localhost:3005`, the existing **Keycloak** session
 > which has already permitted access will be used for subsequent authorization requests, so the **Keycloak** login
 > screen will not be shown again.
 
@@ -571,44 +584,48 @@ less secure than the Authcode flow but can be used in some client-side applicati
 
 ### Implicit Grant - Sample Code
 
-A user must first be redirected to **Keycloak**, requesting a `token`, `oa.getAuthorizeUrl()` is returning a URL of the
-form `/oauth/authorize?response_type=token&client_id={{client-id}}&state=xyz&redirect_uri={{callback_url}}`
+A user must first be redirected to **Keycloak**, requesting a `token` directly. The `keycloak.getImplicitAuthorizeUrl()`
+function returns a URL of the form:
+`/protocol/openid-connect/auth?response_type=id_token+token&client_id={{client-id}}&state=xyz&redirect_uri={{callback_url}}&nonce={{nonce}}`
 
 ```javascript
 function implicitGrant(req, res) {
-    const path = oa.getAuthorizeUrl("token");
-    return res.redirect(path);
+    const state = require('crypto').randomBytes(16).toString('hex');
+    req.session.oauth_state = state;
+
+    const url = keycloak.getImplicitAuthorizeUrl(state);
+    return res.redirect(url);
 }
 ```
 
-The after the User authorizes access, the response is received by the `redirect_uri` and is handled in the code below, a
-usable access token is received from **Keycloak**
+After the user authenticates, **Keycloak** posts the tokens directly to the `redirect_uri` without a code exchange step:
 
 ```javascript
-function implicitGrantCallback(req, res) {
-    return getUserFromAccessToken(req, req.query.token).then((user) => {
-        // Store User and return
-    });
+function authCodeGrantCallback(req, res) {
+    // For the Implicit flow, access_token arrives directly in the POST body
+    const accessToken = req.body.access_token;
+    return keycloak
+        .getUserInfo(accessToken)
+        .then(({ body: user }) => {
+            req.session.username = user.preferred_username || user.sub;
+            return res.redirect('/');
+        });
 }
 ```
 
 ### Implicit Grant - Running the Example
 
 It is possible to invoke the Implicit grant flow programmatically, by bringing up the page `http://localhost:3000/` and
-clicking on the Implicit Grant Button
+clicking on the **Implicit Grant** link.
 
-The user is initially redirected to **Keycloak**, and must log in
+The user is redirected to **Keycloak** and must log in:
 
-![](https://fiware.github.io/tutorials.Securing-Access/img/keyrock-log-in.png)
+![](https://fiware.github.io/tutorials.Securing-Access/img/tutorial-log-in.png)
 
-The user must then authorize the request
+The response displays the user on the top right of the screen, with a success flash message.
 
-![](https://fiware.github.io/tutorials.Securing-Access/img/keyrock-authorize.png)
-
-The response displays the user on the top right of the screen, details of the token are also flashed onto the screen.
-
-> **Note** Unless you deliberately log out of **Keycloak** > `http://localhost:3005`, the existing **Keycloak** session
-> which has already permitted access will be used for subsequent authorization request.
+> **Note** Unless you deliberately log out of **Keycloak** at `http://localhost:3005`, the existing **Keycloak** session
+> which has already permitted access will be used for subsequent authorization requests.
 
 ## Client Credentials Grant
 
@@ -621,48 +638,53 @@ been included for completeness.
 
 ### Logging in as an Application
 
-To log in using the client credentials flow send a POST request to the `oauth2/token` endpoint with the
-`grant_type=client_credentials`
+To log in using the Client Credentials flow send a POST request to the Keycloak token endpoint with
+`grant_type=client_credentials`:
 
 #### :three: Request:
 
 ```console
 curl -iX POST \
-  'http://localhost:3005/oauth2/token' \
-  -H 'Accept: application/json' \
-  -H 'Authorization: Basic dHV0b3JpYWwtZGNrci1zaXRlLTAwMDAteHByZXNzd2ViYXBwOnR1dG9yaWFsLWRja3Itc2l0ZS0wMDAwLWNsaWVudHNlY3JldA==' \
+  'http://localhost:3005/realms/farm-management/protocol/openid-connect/token' \
   -H 'Content-Type: application/x-www-form-urlencoded' \
-  --data "grant_type=client_credentials"
+  --data 'grant_type=client_credentials&client_id=ngsi-ld-farm&client_secret=1234'
 ```
 
 #### Response:
 
-The response returns an access code to identify the application itself.
+The response returns an access token to identify the application itself.
 
 ```json
 {
-    "access_token": "3816cf24b2d233546ae9244f6f6fdc327bfba69f",
+    "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ii4uLiJ9...",
+    "expires_in": 300,
     "token_type": "Bearer",
-    "expires_in": 3599
+    "scope": "profile email"
 }
 ```
 
 ### Client Credentials Grant - Sample Code
 
-The code is similar to the User Credential Grant, but without an explicit username or password.
+The code is similar to the User Credentials Grant, but without an explicit username or password:
 
 ```javascript
 function clientCredentialGrant(req, res) {
-    oa.getOAuthClientCredentials().then((results) => {
-        // Store Access token
-    });
+    keycloak
+        .getClientCredentials()
+        .then(({ status, body }) => {
+            storeTokens(req, body);
+            req.session.username = 'Application';
+            req.flash('success', 'Application logged in with <strong>Client Credentials</strong>');
+            return res.redirect('/');
+        })
+        .catch(() => res.redirect('/'));
 }
 ```
 
 ### Client Credentials Grant - Running the Example
 
 It is possible to invoke the Client Credentials grant flow programmatically, by bringing up the page
-`http://localhost:3000/` and clicking on the Client Credentials Button
+`http://localhost:3000/` and clicking on the **Client Credentials** link.
 
 The response displays the details of the token. No User is involved.
 
@@ -678,46 +700,44 @@ appropriate for all grant types.
 
 #### :four: Request
 
-Check to see if Refresh Token flow is available, merely log in using one of the other grant types, for example to log in
-using the user-credentials flow send a POST request to the `oauth2/token` endpoint with the `grant_type=password`
+Check to see if the Refresh Token flow is available by logging in using one of the other grant types. For example, to
+log in using the User Credentials flow send a POST request to the Keycloak token endpoint with `grant_type=password`:
 
 ```console
 curl -iX POST \
-  'http://localhost:3005/oauth2/token' \
-  -H 'Accept: application/json' \
-  -H 'Authorization: Basic dHV0b3JpYWwtZGNrci1zaXRlLTAwMDAteHByZXNzd2ViYXBwOnR1dG9yaWFsLWRja3Itc2l0ZS0wMDAwLWNsaWVudHNlY3JldA==' \
+  'http://localhost:3005/realms/farm-management/protocol/openid-connect/token' \
   -H 'Content-Type: application/x-www-form-urlencoded' \
-  --data "username=alice@fiware.farm&password=test&grant_type=password"
+  --data 'username=bob%40fiware.farm&password=test&grant_type=password&client_id=ngsi-ld-farm&client_secret=1234&scope=openid+profile+email'
 ```
 
 #### Response
 
-Along with the `access_token` identifying the user, the response returns an `refresh_token`
+Along with the `access_token` identifying the user, the response also returns a `refresh_token`:
 
 ```json
 {
-    "access_token": "a7e22dfe2bd7d883c8621b9eb50797a7f126eeab",
+    "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ii4uLiJ9...",
+    "expires_in": 300,
+    "refresh_expires_in": 1800,
+    "refresh_token": "eyJhbGciOiJIUzUxMiIsInR5cCIgOiAiSldUIiwia2lkIiA6Ii4uLiJ9...",
     "token_type": "Bearer",
-    "expires_in": 3599,
-    "refresh_token": "05e386edd9f95ed0e599c5004db8573e86dff874"
+    "id_token": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6Ii4uLiJ9...",
+    "scope": "openid profile email"
 }
 ```
 
 ### Refresh Access Token
 
-The `refresh_token=05e386edd9f95ed0e599c5004db8573e86dff874` from the response above is stored for later use. To obtain
-a new `access_token` (for example once the previous one has expired) the `refresh_token` is used in the OAuth2 refresh
-token flow and a `grant_type=refresh_token`
+The `refresh_token` from the response above is stored for later use. To obtain a new `access_token` (for example once
+the previous one has expired) the `refresh_token` is used with `grant_type=refresh_token`:
 
 #### :five: Request
 
 ```console
 curl -iX POST \
-  'http://localhost:3005/oauth2/token' \
-  -H 'Accept: application/json' \
-  -H 'Authorization: Basic dHV0b3JpYWwtZGNrci1zaXRlLTAwMDAteHByZXNzd2ViYXBwOnR1dG9yaWFsLWRja3Itc2l0ZS0wMDAwLWNsaWVudHNlY3JldA==' \
+  'http://localhost:3005/realms/farm-management/protocol/openid-connect/token' \
   -H 'Content-Type: application/x-www-form-urlencoded' \
-  --data "refresh_token=05e386edd9f95ed0e599c5004db8573e86dff874&grant_type=refresh_token"
+  --data 'grant_type=refresh_token&client_id=ngsi-ld-farm&client_secret=1234&refresh_token=<refresh_token>'
 ```
 
 #### Response
@@ -727,41 +747,46 @@ expiry window has been moved forward.
 
 ```json
 {
-    "access_token": "298717d478980a2f0c3d2e9f9e222f1bb73e1c69",
+    "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ii4uLiJ9...",
+    "expires_in": 300,
+    "refresh_expires_in": 1800,
+    "refresh_token": "eyJhbGciOiJIUzUxMiIsInR5cCIgOiAiSldUIiwia2lkIiA6Ii4uLiJ9...",
     "token_type": "Bearer",
-    "expires_in": 3599,
-    "refresh_token": "4611e3ab68b5b606eb7a43db6835de646bb7d11d"
+    "scope": "openid profile email"
 }
 ```
 
 ### Refresh Token - Sample Code
 
-The code delegates all the OAuth2 calls to a separate library
-[oauth2.js](https://github.com/FIWARE/tutorials.Step-by-Step/blob/master/context-provider/lib/oauth2.js). Every request
-includes the standard OAuth2 header and each request is wrapped in a promise to simplify the application code. The
-Request Token flow is invoked using the `oa.getOAuthRefreshToken()` function - the previously received `refresh_token`
-used to receive a new `access_token` once the previous token has expired.
+The code delegates the token refresh to
+[keycloak.js](https://github.com/FIWARE/tutorials.Step-by-Step/blob/master/NGSI-LD/app/lib/keycloak.js). The Refresh
+Token flow is invoked using `keycloak.refreshAccessToken()` — the previously received `refresh_token` is used to obtain
+a new `access_token` once the previous one has expired:
 
 ```javascript
 function refreshTokenGrant(req, res) {
-    return oa.getOAuthRefreshToken(req.session.refresh_token).then((results) => {
-        // Store new Access Token
-    });
+    return keycloak
+        .refreshAccessToken(req.session.refresh_token)
+        .then(({ status, body }) => {
+            storeTokens(req, body);
+            req.flash('success', req.session.username + ' <strong>refreshed token</strong>');
+            return res.redirect('/');
+        })
+        .catch(() => res.redirect('/'));
 }
 ```
 
 ### Refresh Token - Running the Example
 
-It is possible to invoke the Token Refresh flow programmatically, by bringing up the page `http://localhost:3000/` and
-filling out the username and password form.
+First log in using the username and password form at `http://localhost:3000/`:
 
 ![](https://fiware.github.io/tutorials.Securing-Access/img/tutorial-log-in.png)
 
-The response displays the user on the top right of the screen, details of the token are also flashed onto the screen:
+Once logged in, press the **Refresh Token** button to obtain a new `access_token` and `refresh_token`:
 
-![](https://fiware.github.io/tutorials.Securing-Access/img/tutorial-reponse.png)
+![](https://fiware.github.io/tutorials.Securing-Access/img/tutorial-response.png)
 
-Pressing the **Refresh Token** button invokes returns a new `access_token` and `refresh_token` for the logged in user.
+Pressing **Refresh Token** returns a new `access_token` and `refresh_token` for the logged-in user.
 
 # PDP - Access Control
 
@@ -780,51 +805,49 @@ the logged in site itself. Securing other services in conjunction with a
 ## Authentication Access
 
 If **Keycloak** (or any other OAuth2 provider) has successfully logged in, an `access_token` has been provided saying
-that the user exists. This information is sufficient to **authenticate** a User
+that the user exists. This information is sufficient to **authenticate** a User.
 
 Level 1 PDP can be used in conjunction with any OAuth2 provider using any flow.
 
-If a user has authenticated using **Keycloak**, the freshness of the access token can be checked by making a GET request
-to the `/user` endpoint.
+Because the tutorial uses **Keycloak**-issued JWTs stored server-side, token freshness can be verified locally by
+decoding the JWT payload and checking the `exp` claim — no network round-trip required.
 
 #### :six: Request
 
 ```console
- curl -X GET \
-  'http://localhost:3005/user?access_token={{access-token}}&app_id={{app-id}}'
+curl -X GET \
+  'http://localhost:3005/realms/farm-management/protocol/openid-connect/userinfo' \
+  -H 'Authorization: Bearer <access_token>'
 ```
 
-A successful response indicates a valid `access_token`.
+A `200 OK` response indicates a valid, non-expired `access_token`.
 
 ### Authentication Access - Sample Code
 
-To check that a user has logged in, just store the `access_token` into session when they log in, and check for its
-existence:
+To check that a user has logged in, just store the `access_token` in session when they log in and check for its
+existence. The JWT is decoded to read the `exp` claim without a network call:
 
 ```javascript
-function pdpAuthentication(req, res, next) {
-    res.locals.authorized = req.session.access_token ? true : false;
+function authenticate(req, res, next) {
+    if (!req.session.access_token) {
+        res.locals.authorized = false;
+        return next();
+    }
+
+    const claims = req.session.claims || decodeJwtPayload(req.session.access_token);
+    if (!claims) {
+        res.locals.authorized = false;
+        return next();
+    }
+
+    const now = Math.floor(Date.now() / 1000);
+    if (claims.exp && claims.exp < now) {
+        res.locals.authorized = false;
+        return next();
+    }
+
+    res.locals.authorized = true;
     return next();
-}
-```
-
-To check whether a **Keycloak** `access_token` has expired, you can try to retrieve the current user details on request:
-
-```javascript
-function pdpAuthentication(req, res, next) {
-    const keyrockUserUrl =
-        keyrockIPAddress + "/user" + "?access_token=" + req.session.access_token + "&app_id=" + clientId;
-    return oa
-        .get(keyrockUserUrl)
-        .then((response) => {
-            res.locals.authorized = true;
-            return next();
-        })
-        .catch((error) => {
-            debug(error);
-            res.locals.authorized = false;
-            return next();
-        });
 }
 ```
 
@@ -832,88 +855,67 @@ function pdpAuthentication(req, res, next) {
 
 Level 2 PDP can only be used with our own trusted instance of **Keycloak**, usually via the Password Grant flow.
 
-If we are using our own trusted instance of **Keycloak**, once a user has signed in and obtained an `access_token`, the
-`access_token` can be stored in session and used to retrieve user details on demand. The request for user details may be
-extended to include resource permissions. Using this information it is possible to permit or deny access to individual
-resources.
-
-As a reminder, **Keycloak** permissions are based on `resource` (e.g. URL) and `action` (which can be mapped to an HTTP
-verb). We can retrieve extended user details including access permissions by adding additional parameters to a `/user`
-GET request
+Once a user has signed in and obtained an `access_token`, the roles embedded in the JWT can be inspected server-side
+without any additional network call to Keycloak. The `realm_access.roles` claim in the JWT contains the set of realm
+roles assigned to the user.
 
 #### :seven: Request
 
+To introspect a token and confirm its roles, send a POST to the Keycloak introspect endpoint:
+
 ```console
- curl -X GET \
-  'http://localhost:3005/user?access_token={{access-token}}&action={{action}}&resource={{resource}}&app_id={{app-id}}'
+curl -X POST \
+  'http://localhost:3005/realms/farm-management/protocol/openid-connect/token/introspect' \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+  --data 'token=<access_token>&client_id=ngsi-ld-farm&client_secret=1234'
 ```
-
-Where :
-
--   `{{access-token}}` is the current access token of a logged in user e.g. `6c1f1ac938f644c655b9c46c67d9f8b068345e89`
--   `{{action}}` is an HTTP Verb e.g. `GET`
--   `{{resource}}` is a secured endpoint e.g. `/app/price-change`
--   `{{app-id}}`
 
 #### Response
 
-The response include an `authorization_decision` attribute which permits or denies access.
-
-In the example below the access token used belonged to Bob the manager, and he has been granted access to the
-`/app/price-change` endpoint within the `ngsi-ld-farm`
+The response includes an `active` flag and the user's role claims:
 
 ```json
 {
-    "organizations": [],
-    "displayName": "",
-    "roles": [
-        {
-            "id": "managers-role-0000-0000-000000000000",
-            "name": "Management"
-        }
-    ],
-    "app_id": "ngsi-ld-farm",
-    "trusted_apps": [],
-    "isGravatarEnabled": false,
-    "email": "bob-the-manager@test.com",
-    "id": "bbbbbbbb-good-0000-0000-000000000000",
-    "authorization_decision": "Permit",
-    "app_azf_domain": "",
-    "username": "bob",
-    "trusted_applications": []
+    "active": true,
+    "sub": "bbbbbbbb-good-0000-0000-000000000000",
+    "preferred_username": "bob",
+    "email": "bob@fiware.farm",
+    "realm_access": {
+        "roles": ["farm-manager"]
+    },
+    "client_id": "ngsi-ld-farm"
 }
 ```
 
 ### Basic Authorization - Sample Code
 
-Keycloak can therefore be used as a PDP on its own, we merely need to check if the user has access to the resource and
-set a flag:
+**Keycloak** issues JWTs that carry role information directly. The authorization middleware reads `realm_access.roles`
+from the stored JWT claims — no Keycloak API call is required at request time:
 
 ```javascript
-function pdpBasicAuthorization(req, res, next, url = req.url) {
-    const keyrockUserUrl =
-        keyrockIPAddress +
-        "/user" +
-        "?access_token=" +
-        req.session.access_token +
-        "&action=" +
-        req.method +
-        "&resource=" +
-        url +
-        "&app_id=" +
-        clientId;
-    return oa
-        .get(keyrockUserUrl)
-        .then((response) => {
-            const user = JSON.parse(response);
-            res.locals.authorized = user.authorization_decision === "Permit";
-            return next();
-        })
-        .catch((error) => {
-            debug(error);
-            res.locals.authorized = false;
-            return next();
-        });
+function authorizeBasicPDP(req, res, next) {
+    if (!req.session.access_token) {
+        res.locals.authorized = false;
+        return next();
+    }
+
+    const roles = getRoles(req); // reads realm_access.roles from JWT
+    const method = req.method.toUpperCase();
+
+    // farm-manager can do everything; read-only-consultant can only GET
+    if (roles.includes('farm-manager')) {
+        res.locals.authorized = true;
+    } else if (method === 'GET' || method === 'HEAD') {
+        res.locals.authorized = roles.length > 0;
+    } else {
+        // POST / PATCH / DELETE require a write-capable role
+        res.locals.authorized =
+            roles.includes('livestock-supervisor') ||
+            roles.includes('crop-supervisor') ||
+            roles.includes('equipment-supervisor');
+    }
+
+    return next();
 }
 ```
 
@@ -945,12 +947,11 @@ function sendCommand(req, res) {
 
 ## PDP Access Control - Running the Example
 
-> **Note** Only four resources have been secured at level 2:
+> **Note** The following resources are secured within the FMIS tutorial application:
 >
-> -   sending the unlock door command
-> -   sending the ring bell command
-> -   access to the price-change area
-> -   access to the order-stock area
+> -   Viewing individual farm building pages (Level 1)
+> -   Sending IoT device commands (Level 2 — write-capable roles only)
+> -   Accessing restricted farm management areas (Level 2)
 
 #### Anonymous Access
 
@@ -958,82 +959,60 @@ function sendCommand(req, res) {
 
 ##### Level 1 : Authentication Access
 
--   Click on any store page - access is **denied** for anonymous access
+-   Click on any farm building page — access is **denied** for anonymous users
 -   Open the Device Monitor on `http://localhost:3000/device/monitor`
-    -   Switch on the lamp - access is **denied** for anonymous access
+    -   Send a device command — access is **denied** for anonymous users
 
 ##### Level 2 : Authorization Access
 
--   Click on the restricted access links at `http://localhost:3000` - access is **denied**
--   Open the Device Monitor on `http://localhost:3000/device/monitor`
-    -   Unlock a door - access is **denied**
-    -   Ring a bell - access is **denied**
-    -   Switch on the lamp - access is **denied**
+-   All device commands at `http://localhost:3000/device/monitor` — access is **denied**
 
-#### Eve the Eavesdropper
+#### Mallory the Malicious Attacker
 
-Eve has an account, but no roles in the application.
+Mallory has an account but has been assigned no roles.
 
-> **Note** As Eve has a recognized account, she gains full authentication access, even though her account has no roles
-> attached.
-
--   From `http://localhost:3000`, log in as `eve@example.com` with the password `test`
+-   From `http://localhost:3000`, log in as `mallory@fiware.farm` with the password `test`
 
 ##### Level 1 : Authentication Access
 
--   Click on any store page - access is **permitted** for any logged in users
--   Open the Device Monitor on `http://localhost:3000/device/monitor`
-    -   Switch on the lamp - access is **permitted** for any logged in users
+-   Click on any farm building page — access is **permitted** for any logged-in user
 
 ##### Level 2 : Authorization Access
 
--   Click on the restricted access links at `http://localhost:3000` - access is **denied**
--   Open the Device Monitor on `http://localhost:3000/device/monitor`
-    -   Unlock a door - access is **denied**
-    -   Ring a bell - access is **denied**
+-   Send any device command — access is **denied** (no roles assigned)
 
-#### Bob The Regional Manager
+#### Jenny the Read-Only Consultant
 
-Bob has the **management** role
+Jenny has the **`read-only-consultant`** role, granting read-only access.
 
--   From `http://localhost:3000`, log in as `bob-the-manager@test.com` with the password `test`
+-   From `http://localhost:3000`, log in as `jenny@fiware.farm` with the password `test`
 
 ##### Level 1 : Authentication Access
 
--   Click on any store page - access is **permitted** for any logged in users
--   Open the Device Monitor on `http://localhost:3000/device/monitor`
-    -   Switch on the lamp - access is **permitted** for any logged in users
+-   Click on any farm building page — access is **permitted** for any logged-in user
 
 ##### Level 2 : Authorization Access
 
--   Click on the restricted access links at `http://localhost:3000` - access is **permitted** - This is a management
-    only permission
--   Open the Device Monitor on `http://localhost:3000/device/monitor`
-    -   Unlock a door - access is **denied**. - This is a security only permission
-    -   Ring a bell - access is **permitted** - This is permitted to management users
+-   GET requests to farm data — access is **permitted**
+-   Sending device commands (POST) — access is **denied** (read-only role)
 
-#### Charlie the Security Manager
+#### Bob the Farm Manager
 
-Charlie has the **security** role
+Bob has the **`farm-manager`** role, granting full read/write access.
 
--   From `http://localhost:3000`, log in as `charlie-security@test.com` with the password `test`
+-   From `http://localhost:3000`, log in as `bob@fiware.farm` with the password `test`
 
 ##### Level 1 : Authentication Access
 
--   Click on any store page - access is **permitted** for any logged in users
--   Open the Device Monitor on `http://localhost:3000/device/monitor`
-    -   Switch on the lamp - access is **permitted** for any logged in users
+-   Click on any farm building page — access is **permitted** for any logged-in user
 
-##### Level 2: Authorization Access
+##### Level 2 : Authorization Access
 
--   Click on the restricted access links at `http://localhost:3000` - access is **denied** - This is a management only
-    permission
--   Open the Device Monitor on `http://localhost:3000/device/monitor`
-    -   Unlock a door - access is **permitted** - This is a security only permission
-    -   Ring a bell - access is **permitted** - This is permitted to security users
+-   All farm data pages — access is **permitted**
+-   All device commands — access is **permitted** (farm-manager role)
 
 ---
 
 ## License
 
-[MIT](LICENSE) © 2018-2020 FIWARE Foundation e.V.
+[MIT](LICENSE) © 2018-2026 FIWARE Foundation e.V.

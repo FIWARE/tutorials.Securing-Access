@@ -74,8 +74,8 @@ curl -s -o /dev/null -X POST \
        }
       ],
       "commands": [
-        {"name": "add", "type": "Property"},
-        {"name": "remove", "type": "Property"}
+        {"name": "add", "type": "command"},
+        {"name": "remove", "type": "command"}
       ],
       "static_attributes": [
         {"name": "supportedProtocol", "type": "Property", "value": ["json"]},
@@ -132,8 +132,8 @@ curl -s -o /dev/null -X POST \
      "transport":   "HTTP",
      "timezone":    "Europe/Berlin",
      "commands": [
-        {"name": "on", "type": "Property"},
-        {"name": "off", "type": "Property"}
+        {"name": "on", "type": "command"},
+        {"name": "off", "type": "command"}
       ],
       "static_attributes": [
         {"name": "category", "type":"Property", "value": ["actuator"]},
@@ -153,8 +153,8 @@ curl -s -o /dev/null -X POST \
         {"object_id": "gps", "name": "location", "type": "geo:point"}
       ],
      "commands": [
-        {"name": "start", "type": "Property"},
-        {"name": "stop", "type": "Property"}
+        {"name": "start", "type": "command"},
+        {"name": "stop", "type": "command"}
       ],
       "static_attributes": [
         {"name": "controlledProperty", "type": "Property", "value": ["location", "status"]},
