@@ -130,7 +130,7 @@ case "${command}" in
         echo "usage: services [create|start|stop]"
         ;;
     "start")
-        export $(cat .env | grep "#" -v)
+        set -a; source .env; set +a
         stoppingContainers
         echo -e "Starting containers: \033[1;34mKeycloak\033[0m, \033[1;34mOrion-LD\033[0m, a \033[1mTutorial\033[0m application, a \033[1mContext\033[0m server, \033[1mPostgreSQL\033[0m and \033[1mMongoDB\033[0m databases."
         echo -e "- \033[1;34mKeycloak\033[0m is the Identity and Access Management server"
@@ -148,11 +148,11 @@ case "${command}" in
         echo -e "Now open \033[4mhttp://localhost:${TUTORIAL_APP_PORT}\033[0m"
         ;;
     "stop")
-        export $(cat .env | grep "#" -v)
+        set -a; source .env; set +a
         stoppingContainers
         ;;
     "create")
-        export $(cat .env | grep "#" -v)
+        set -a; source .env; set +a
         echo "Pulling Docker images"
         docker pull -q "quay.io/curl/curl:${CURL_VERSION}"
         ${dockerCmd} pull --ignore-pull-failures
