@@ -169,18 +169,21 @@ keep persistence of the information they hold. We will also be using the dummy I
 Therefore the overall architecture will consist of the following elements:
 
 -   The FIWARE [Orion-LD Context Broker](https://fiware-orion.readthedocs.io/en/latest/) which will receive requests
-    using [NGSI-LD](https://forge.etsi.org/swagger/ui/?url=https://forge.etsi.org/rep/NGSI-LD/NGSI-LD/raw/master/spec/updated/generated/full_api.json)
+    using
+    [NGSI-LD](https://forge.etsi.org/swagger/ui/?url=https://forge.etsi.org/rep/NGSI-LD/NGSI-LD/raw/master/spec/updated/generated/full_api.json)
 -   The FIWARE [IoT Agent for JSON](https://fiware-iotagent-json.readthedocs.io/en/latest/) which will receive
-    southbound requests using [NGSI-LD](https://forge.etsi.org/swagger/ui/?url=https://forge.etsi.org/rep/NGSI-LD/NGSI-LD/raw/master/spec/updated/generated/full_api.json)
-    and convert them to [JSON](https://fiware-iotagent-json.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
-    commands for the devices
+    southbound requests using
+    [NGSI-LD](https://forge.etsi.org/swagger/ui/?url=https://forge.etsi.org/rep/NGSI-LD/NGSI-LD/raw/master/spec/updated/generated/full_api.json)
+    and convert them to
+    [JSON](https://fiware-iotagent-json.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual) commands
+    for the devices
 -   [Keycloak](https://www.keycloak.org/) Identity and Access Management offering:
     -   An OAuth2 / OIDC authentication system for Applications and Users
     -   A graphical frontend for Identity Management Administration
     -   A REST API for Identity Management via HTTP requests
 -   The underlying [MongoDB](https://www.mongodb.com/) database :
-    -   Used by the **Orion-LD Context Broker** to hold context data information such as data entities, subscriptions and
-        registrations
+    -   Used by the **Orion-LD Context Broker** to hold context data information such as data entities, subscriptions
+        and registrations
     -   Used by the **IoT Agent** to hold device information such as device URLs and Keys
 -   A [PostgreSQL](https://www.postgresql.org/) database :
     -   Used by **Keycloak** to persist user identities, applications, roles and permissions
@@ -189,9 +192,9 @@ Therefore the overall architecture will consist of the following elements:
     -   Shows which animals and equipment are present
     -   Allows authorized users to send commands to IoT devices
     -   Allows authorized users into restricted areas
--   A webserver acting as set of [dummy IoT devices](https://github.com/FIWARE/tutorials.IoT-Sensors/) using
-    the [JSON](https://fiware-iotagent-json.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual)
-    protocol running over HTTP - access to certain resources is restricted.
+-   A webserver acting as set of [dummy IoT devices](https://github.com/FIWARE/tutorials.IoT-Sensors/) using the
+    [JSON](https://fiware-iotagent-json.readthedocs.io/en/latest/usermanual/index.html#user-programmers-manual) protocol
+    running over HTTP - access to certain resources is restricted.
 
 Since all interactions between the elements are initiated by HTTP requests, the entities can be containerized and run
 from exposed ports.
@@ -229,19 +232,20 @@ tutorial:
 
 The `tutorial` container is driven by environment variables as shown:
 
-| Key                | Value                                                    | Description                                                                         |
-| ------------------ | -------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| DEBUG              | `tutorial:*`                                             | Debug flag used for logging                                                         |
-| WEB_APP_PORT       | `3000`                                                   | Port used by web-app which displays the login screen etc.                           |
-| SECURE_ENDPOINTS   | `true`                                                   | Enables PDP enforcement on protected routes                                         |
-| OIDC_ISSUER        | `http://keycloak:8080/realms/farm-management`            | Internal URL of the **Keycloak** realm — used for server-to-server calls            |
-| KEYCLOAK_URL       | `http://localhost:3005/realms/farm-management`           | Public URL of **Keycloak** — used for browser redirects (login / logout)            |
-| OIDC_CLIENT_ID     | `ngsi-ld-farm`                                           | The Client ID registered in Keycloak for this application                           |
-| OIDC_CLIENT_SECRET | `1234`                                                   | The Client Secret registered in Keycloak for this application                       |
-| OIDC_REDIRECT_URI  | `http://localhost:3000/login/callback`                   | The callback URL Keycloak will redirect to after a successful authentication        |
-| OIDC_SCOPE         | `openid profile email`                                   | OIDC scopes requested during authentication                                         |
+| Key                | Value                                          | Description                                                                  |
+| ------------------ | ---------------------------------------------- | ---------------------------------------------------------------------------- |
+| DEBUG              | `tutorial:*`                                   | Debug flag used for logging                                                  |
+| WEB_APP_PORT       | `3000`                                         | Port used by web-app which displays the login screen etc.                    |
+| SECURE_ENDPOINTS   | `true`                                         | Enables PDP enforcement on protected routes                                  |
+| OIDC_ISSUER        | `http://keycloak:8080/realms/farm-management`  | Internal URL of the **Keycloak** realm — used for server-to-server calls     |
+| KEYCLOAK_URL       | `http://localhost:3005/realms/farm-management` | Public URL of **Keycloak** — used for browser redirects (login / logout)     |
+| OIDC_CLIENT_ID     | `ngsi-ld-farm`                                 | The Client ID registered in Keycloak for this application                    |
+| OIDC_CLIENT_SECRET | `1234`                                         | The Client Secret registered in Keycloak for this application                |
+| OIDC_REDIRECT_URI  | `http://localhost:3000/login/callback`         | The callback URL Keycloak will redirect to after a successful authentication |
+| OIDC_SCOPE         | `openid profile email`                         | OIDC scopes requested during authentication                                  |
 
-The other `tutorial` container configuration values described in the YAML file have been described in previous tutorials.
+The other `tutorial` container configuration values described in the YAML file have been described in previous
+tutorials.
 
 `OIDC_ISSUER` and `KEYCLOAK_URL` are split because the tutorial runs inside Docker. The `OIDC_ISSUER` value uses the
 internal Docker hostname `keycloak` for server-to-server communication (token exchange, introspection). The
@@ -459,7 +463,7 @@ function userCredentialGrant(req, res) {
         .getUserCredentials(email, password)
         .then(({ status, body }) => {
             if (status !== 200 || !body.access_token) {
-                throw new Error(body.error_description || 'Password grant failed');
+                throw new Error(body.error_description || "Password grant failed");
             }
             storeTokens(req, body);
             return keycloak.getUserInfo(body.access_token);
@@ -467,12 +471,12 @@ function userCredentialGrant(req, res) {
         .then(({ body: user }) => {
             const username = user.preferred_username || user.sub;
             req.session.username = username;
-            req.flash('success', username + ' logged in with <strong>Password</strong>');
-            return res.redirect('/');
+            req.flash("success", username + " logged in with <strong>Password</strong>");
+            return res.redirect("/");
         })
         .catch((error) => {
-            req.flash('error', 'Access Denied');
-            return res.redirect('/');
+            req.flash("error", "Access Denied");
+            return res.redirect("/");
         });
 }
 ```
@@ -482,12 +486,12 @@ The underlying `getUserCredentials()` function posts the password grant to the K
 ```javascript
 function getUserCredentials(username, password) {
     const body = querystring.stringify({
-        grant_type: 'password',
+        grant_type: "password",
         client_id: clientId,
         client_secret: clientSecret,
         username,
         password,
-        scope
+        scope,
     });
     return post(tokenEndpoint, body);
 }
@@ -528,7 +532,7 @@ the form:
 function authCodeGrant(req, res) {
     const verifier = keycloak.generateCodeVerifier();
     const challenge = keycloak.generateCodeChallenge(verifier);
-    const state = require('crypto').randomBytes(16).toString('hex');
+    const state = require("crypto").randomBytes(16).toString("hex");
 
     req.session.pkce_verifier = verifier;
     req.session.oauth_state = state;
@@ -554,7 +558,7 @@ function authCodeGrantCallback(req, res) {
         })
         .then(({ body: user }) => {
             req.session.username = user.preferred_username || user.sub;
-            return res.redirect('/');
+            return res.redirect("/");
         });
 }
 ```
@@ -590,7 +594,7 @@ function returns a URL of the form:
 
 ```javascript
 function implicitGrant(req, res) {
-    const state = require('crypto').randomBytes(16).toString('hex');
+    const state = require("crypto").randomBytes(16).toString("hex");
     req.session.oauth_state = state;
 
     const url = keycloak.getImplicitAuthorizeUrl(state);
@@ -604,12 +608,10 @@ After the user authenticates, **Keycloak** posts the tokens directly to the `red
 function authCodeGrantCallback(req, res) {
     // For the Implicit flow, access_token arrives directly in the POST body
     const accessToken = req.body.access_token;
-    return keycloak
-        .getUserInfo(accessToken)
-        .then(({ body: user }) => {
-            req.session.username = user.preferred_username || user.sub;
-            return res.redirect('/');
-        });
+    return keycloak.getUserInfo(accessToken).then(({ body: user }) => {
+        req.session.username = user.preferred_username || user.sub;
+        return res.redirect("/");
+    });
 }
 ```
 
@@ -673,11 +675,11 @@ function clientCredentialGrant(req, res) {
         .getClientCredentials()
         .then(({ status, body }) => {
             storeTokens(req, body);
-            req.session.username = 'Application';
-            req.flash('success', 'Application logged in with <strong>Client Credentials</strong>');
-            return res.redirect('/');
+            req.session.username = "Application";
+            req.flash("success", "Application logged in with <strong>Client Credentials</strong>");
+            return res.redirect("/");
         })
-        .catch(() => res.redirect('/'));
+        .catch(() => res.redirect("/"));
 }
 ```
 
@@ -769,10 +771,10 @@ function refreshTokenGrant(req, res) {
         .refreshAccessToken(req.session.refresh_token)
         .then(({ status, body }) => {
             storeTokens(req, body);
-            req.flash('success', req.session.username + ' <strong>refreshed token</strong>');
-            return res.redirect('/');
+            req.flash("success", req.session.username + " <strong>refreshed token</strong>");
+            return res.redirect("/");
         })
-        .catch(() => res.redirect('/'));
+        .catch(() => res.redirect("/"));
 }
 ```
 
@@ -903,16 +905,16 @@ function authorizeBasicPDP(req, res, next) {
     const method = req.method.toUpperCase();
 
     // farm-manager can do everything; read-only-consultant can only GET
-    if (roles.includes('farm-manager')) {
+    if (roles.includes("farm-manager")) {
         res.locals.authorized = true;
-    } else if (method === 'GET' || method === 'HEAD') {
+    } else if (method === "GET" || method === "HEAD") {
         res.locals.authorized = roles.length > 0;
     } else {
         // POST / PATCH / DELETE require a write-capable role
         res.locals.authorized =
-            roles.includes('livestock-supervisor') ||
-            roles.includes('crop-supervisor') ||
-            roles.includes('equipment-supervisor');
+            roles.includes("livestock-supervisor") ||
+            roles.includes("crop-supervisor") ||
+            roles.includes("equipment-supervisor");
     }
 
     return next();
